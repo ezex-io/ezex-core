@@ -1,0 +1,42 @@
+[package]
+name = "ezex-deposit"
+version = "1.0.0"
+authors = ["ezeX development team"]
+edition = "2024"
+autotests = false
+
+[[test]]
+name = "test_deposit"
+path = "tests/service.rs"
+
+[[bin]]
+name = "ezex-deposit"
+path = "src/main.rs"
+
+[dependencies]
+tonic = { workspace = true }
+tokio = { workspace = true }
+log = { workspace = true }
+futures = { workspace = true }
+anyhow = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+diesel = { workspace = true }
+diesel_migrations = { workspace = true }
+r2d2 = { workspace = true }
+chrono = { workspace = true }
+prost = { workspace = true }
+structopt = { workspace = true }
+ctrlc = { workspace = true }
+common = { path = "../common" }
+
+[dev-dependencies]
+mockall = { workspace = true }
+assert_cmd = { workspace = true }
+httpmock = { workspace = true }
+predicates = { workspace = true }
+nix = { workspace = true }
+serial_test = { workspace = true }
+
+[build-dependencies]
+tonic-build = { workspace = true }
