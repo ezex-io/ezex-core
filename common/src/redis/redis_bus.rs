@@ -2,7 +2,7 @@ use crate::topic::TopicMessage;
 use futures::channel::mpsc::{Receiver, Sender};
 use futures::SinkExt;
 use futures::StreamExt;
-//re-export used parts
+
 pub use redis_stream_bus::{
     bus::StreamBus, client::RedisClient, config::Config as RedisConfig, mock::MockRedisClient,
     stream::Stream,
@@ -60,25 +60,12 @@ pub trait RedisBusTrait: Sized + Send + Sync {
                             }
                             Err(err) => {
                                 log::error!("Processing error: {}", err);
-                                if let Err(err) = self
-                                    .send_stream(
-                                        Some(correlation_id),
-                                        Box::new(general::internal::Error {
-                                            module: self.module_name(),
-                                            message: err.to_string(),
-                                        }),
-                                        &mut add_tx,
-                                    )
-                                    .await
-                                {
-                                    log::error!("Sending error: {:?}", err);
-                                }
                             }
                         };
 
-                        log::debug!("Acking {:?}", req.id);
+                        log::debug!("Ack {:?}", req.id);
                         if let Err(err) = ack_tx.send(req).await {
-                            log::error!("Acking error: {:?}", err);
+                            log::error!("Ack error: {:?}", err);
                         }
                     }
                     Err(err) => {
@@ -132,6 +119,7 @@ pub trait RedisBusTrait: Sized + Send + Sync {
 mod tests {
     use super::RedisBusTrait;
     use crate::topic::TopicMessage;
+    use crate::redis::*;
     use async_std::task;
     use futures::{channel::mpsc::channel, SinkExt, StreamExt};
     use procedural::Topic;
@@ -178,7 +166,7 @@ mod tests {
         let req = TestMessage {
             message: "hi".to_string(),
         };
-        let fields = crate::stream::StreamFields {
+        let fields = stream::StreamFields {
             module: "test".to_string(),
             correlation_id: None,
             message: req.to_json_string().unwrap(),
@@ -189,7 +177,7 @@ mod tests {
         read_tx.send(req_stream.clone()).await.unwrap();
         add_rx.next().await; //ignore starting up event
         if let Some(res_stream) = add_rx.next().await {
-            let res_fields = crate::stream::decode(&res_stream.fields).unwrap();
+            let res_fields = stream::decode(&res_stream.fields).unwrap();
             assert_eq!(res_stream.id, None);
             assert_eq!(res_fields.correlation_id, stream_id);
             assert_eq!(
@@ -216,7 +204,7 @@ mod tests {
             message: "hi".to_string(),
         };
         let correlation_id = Some("some_id".to_string());
-        let fields = crate::stream::StreamFields {
+        let fields = stream::StreamFields {
             module: "test".to_string(),
             correlation_id: correlation_id.clone(),
             message: req.to_json_string().unwrap(),
@@ -230,7 +218,7 @@ mod tests {
         read_tx.send(req_stream.clone()).await.unwrap();
         add_rx.next().await; //ignore starting up event
         if let Some(res_stream) = add_rx.next().await {
-            let res_fields = crate::stream::decode(&res_stream.fields).unwrap();
+            let res_fields = stream::decode(&res_stream.fields).unwrap();
 
             assert_eq!(res_fields.correlation_id, correlation_id);
         };

@@ -10,7 +10,8 @@ pub struct StreamFields {
 
 impl StreamFields {
     pub fn encode(&self) -> Result<HashMap<String, redis::Value>, serde_redis::encode::Error> {
-        serde_redis::encode::to_map(self)
+        // serde_redis::encode::to_map(self)
+        todo!()
     }
 }
 
@@ -19,11 +20,11 @@ pub fn decode(
 ) -> Result<StreamFields, serde_redis::decode::Error> {
     let mut vec = Vec::new();
     for (k, v) in fields {
-        vec.push(redis::Value::Data(k.as_bytes().to_vec()));
+        vec.push(redis::Value::BulkString(k.as_bytes().to_vec()));
         vec.push(v.clone());
     }
 
-    let bulk = redis::Value::Bulk(vec);
+    let bulk = redis::Value::Array(vec);
     let de = serde_redis::decode::Deserializer::new(bulk);
     Deserialize::deserialize(de)
 }

@@ -28,6 +28,7 @@ chrono = { workspace = true }
 prost = { workspace = true }
 structopt = { workspace = true }
 ctrlc = { workspace = true }
+async-trait = { workspace = true }
 common = { path = "../common" }
 
 [dev-dependencies]
