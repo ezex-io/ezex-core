@@ -1,6 +1,6 @@
 [workspace]
 
-members = ["deposit", "common", "common/procedural"]
+members = ["deposit","spot" , "spot/database" , "common", "common/procedural"]
 
 [workspace.dependencies]
 tonic = { version = "0.12" }
