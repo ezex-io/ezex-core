@@ -1,11 +1,27 @@
-use crate::grpc::spot::{AddOrderRequest, ProtoTrade};
-use crate::models::{
-    trade_order::{TradeOrder, OrderSide, OrderType},
-    matched_trade::MatchedTrade,
+use crate::{
+    grpc::spot::{
+        AddOrderRequest,
+        ProtoTrade,
+    },
+    models::{
+        matched_trade::MatchedTrade,
+        trade_order::{
+            OrderSide,
+            OrderType,
+            TradeOrder,
+        },
+    },
+    utils,
 };
-use crate::utils;
-use anyhow::{anyhow, Context, Result};
-use bigdecimal::{BigDecimal, Zero};
+use anyhow::{
+    anyhow,
+    Context,
+    Result,
+};
+use bigdecimal::{
+    BigDecimal,
+    Zero,
+};
 use std::str::FromStr;
 use tonic::Status;
 
@@ -24,10 +40,10 @@ impl TryFrom<AddOrderRequest> for TradeOrder {
             .map_err(|e| Status::invalid_argument(e.to_string()))?;
 
         // For market orders, we adjust the price to extreme values:
-        // - For a market buy order, we set the price to BigDecimal::MAX so that it matches
-        //   against the lowest available ask price.
-        // - For a market sell order, we set the price to BigDecimal::MIN so that it matches
-        //   against the highest available bid price.
+        // - For a market buy order, we set the price to BigDecimal::MAX so that it matches against
+        //   the lowest available ask price.
+        // - For a market sell order, we set the price to BigDecimal::MIN so that it matches against
+        //   the highest available bid price.
         // Note: The actual execution price will be determined during the matching process.
         match (order_type, side) {
             (OrderType::Market, OrderSide::Buy) => {

@@ -1,10 +1,18 @@
 use crate::topic::TopicMessage;
-use futures::channel::mpsc::{Receiver, Sender};
-use futures::SinkExt;
-use futures::StreamExt;
+use futures::{
+    SinkExt,
+    StreamExt,
+    channel::mpsc::{
+        Receiver,
+        Sender,
+    },
+};
 
 pub use redis_stream_bus::{
-    bus::StreamBus, client::RedisClient, config::Config as RedisConfig, mock::MockRedisClient,
+    bus::StreamBus,
+    client::RedisClient,
+    config::Config as RedisConfig,
+    mock::MockRedisClient,
     stream::Stream,
 };
 
@@ -118,13 +126,22 @@ pub trait RedisBusTrait: Sized + Send + Sync {
 #[cfg(test)]
 mod tests {
     use super::RedisBusTrait;
-    use crate::topic::TopicMessage;
-    use crate::redis::*;
+    use crate::{
+        redis::*,
+        topic::TopicMessage,
+    };
     use async_std::task;
-    use futures::{channel::mpsc::channel, SinkExt, StreamExt};
+    use futures::{
+        SinkExt,
+        StreamExt,
+        channel::mpsc::channel,
+    };
     use procedural::Topic;
     use redis_stream_bus::client::Stream;
-    use serde::{Deserialize, Serialize};
+    use serde::{
+        Deserialize,
+        Serialize,
+    };
 
     struct TestStreamBus;
 

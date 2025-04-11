@@ -3,7 +3,10 @@
 
 use bigdecimal::BigDecimal;
 use diesel::prelude::*;
-use serde::{Deserialize, Serialize};
+use serde::{
+    Deserialize,
+    Serialize,
+};
 
 use super::schema::*;
 
@@ -153,7 +156,7 @@ pub struct Order {
     pub maker_fee: BigDecimal,
     pub taker_fee: BigDecimal,
     pub create_time: i64,
-    pub remain: BigDecimal,    
+    pub remain: BigDecimal,
     pub filled_base: BigDecimal,
     pub filled_quote: BigDecimal,
     pub filled_fee: BigDecimal,

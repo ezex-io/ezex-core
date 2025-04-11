@@ -94,10 +94,4 @@ diesel::joinable!(market_stats -> markets (market_id));
 diesel::joinable!(orders -> markets (market_id));
 diesel::joinable!(trades -> markets (market_id));
 
-diesel::allow_tables_to_appear_in_same_query!(
-    balances,
-    market_stats,
-    markets,
-    orders,
-    trades,
-);
+diesel::allow_tables_to_appear_in_same_query!(balances, market_stats, markets, orders, trades,);

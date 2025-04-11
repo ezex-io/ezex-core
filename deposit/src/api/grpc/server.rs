@@ -1,10 +1,15 @@
-use crate::api::grpc::config::Config;
-use crate::api::grpc::service::VaultServiceImpl;
 use crate::{
-    api::grpc::deposit::vault_service_server::VaultServiceServer,
+    api::grpc::{
+        config::Config,
+        deposit::vault_service_server::VaultServiceServer,
+        service::VaultServiceImpl,
+    },
     database::provider::DatabaseReader,
 };
-use log::{error, info};
+use log::{
+    error,
+    info,
+};
 use tonic::transport::Server;
 
 pub async fn start_server<D>(

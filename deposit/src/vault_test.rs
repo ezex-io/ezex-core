@@ -1,8 +1,13 @@
-use crate::config::Config as VaultConfig;
-use crate::vault::Vault;
-use common::consts::*;
-use common::test_tools;
-use common::{test_tools::PostgresTestDB, topic::deposit};
+use crate::{
+    config::Config as VaultConfig,
+    vault::Vault,
+};
+use common::{
+    consts::*,
+    test_tools,
+    test_tools::PostgresTestDB,
+    topic::deposit,
+};
 use mockall::predicate::*;
 use serde_json::json;
 

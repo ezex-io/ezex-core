@@ -1,8 +1,12 @@
-use crate::database::provider::DatabaseProvider;
-use crate::kms::provider::KMSProvider;
-use crate::vault::Vault;
-use common::redis::redis_bus::RedisBusTrait;
-use common::topic::*;
+use crate::{
+    database::provider::DatabaseProvider,
+    kms::provider::KMSProvider,
+    vault::Vault,
+};
+use common::{
+    redis::redis_bus::RedisBusTrait,
+    topic::*,
+};
 
 pub struct RedisBus<D, K>
 where

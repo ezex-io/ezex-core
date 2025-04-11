@@ -1,6 +1,6 @@
 [workspace]
-
 members = ["deposit","spot" , "spot/database" , "common", "common/procedural"]
+resolver = "3" # see: https://doc.rust-lang.org/cargo/reference/resolver.html#resolver-versions
 
 [workspace.dependencies]
 tonic = { version = "0.12" }

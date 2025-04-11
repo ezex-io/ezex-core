@@ -1,6 +1,8 @@
 use anyhow;
-use std::panic;
-use std::process;
+use std::{
+    panic,
+    process,
+};
 
 pub fn value_or_error(value: &serde_json::Value, key: &str) -> anyhow::Result<serde_json::Value> {
     match value.get(key) {
@@ -24,6 +26,6 @@ pub fn error_to_tonic_status(e: anyhow::Error) -> tonic::Status {
     tonic::Status::internal(e.to_string())
 }
 
-pub fn coin_to_chain_id(coin: &str) ->Option<String>  {
+pub fn coin_to_chain_id(coin: &str) -> Option<String> {
     todo!()
 }

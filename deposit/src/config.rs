@@ -1,11 +1,8 @@
-use serde::{Deserialize, Serialize};
+use serde::{
+    Deserialize,
+    Serialize,
+};
 use structopt::StructOpt;
 
-#[derive(Debug, Clone, Serialize, Deserialize, StructOpt)]
+#[derive(Default, Debug, Clone, Serialize, Deserialize, StructOpt)]
 pub struct Config {}
-
-impl Default for Config {
-    fn default() -> Self {
-        Self {}
-    }
-}
