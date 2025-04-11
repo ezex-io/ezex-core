@@ -9,8 +9,8 @@ use deposit_vault::database::postgres::postgres::PostgresDB;
 use deposit_vault::redis_bus::RedisBus;
 use deposit_vault::vault::Vault;
 use futures::channel::mpsc::channel;
-use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::thread;
 use structopt::StructOpt;
 use tokio::task;
@@ -48,9 +48,7 @@ impl StartCmd {
         let ack_tx = redis.xack_sender();
 
         let redis_handle = task::spawn(async move {
-            let keys: Vec<&str> = vec![
-                topic::deposit::address::Generate::name,
-            ];
+            let keys: Vec<&str> = vec![topic::deposit::address::Generate::name];
             redis.run(&keys, read_tx).await;
         });
 

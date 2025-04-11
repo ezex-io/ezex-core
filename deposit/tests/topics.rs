@@ -1,10 +1,9 @@
 use crate::TestContext;
-use common::topic::{deposit, general, TopicMessage};
+use common::topic::{TopicMessage, deposit, general};
 use common::{consts::*, test_tools};
 use httpmock::Method::POST;
 
 pub async fn test_generate_address(ctx: &mut TestContext) {
-
     let msg = deposit::address::Generate {
         user_id: "alice".to_string(),
         coin: asset::name::TBTC.to_string(),

@@ -32,7 +32,7 @@ where
         &self,
         message: deposit::address::Generate,
     ) -> anyhow::Result<Vec<Box<dyn TopicMessage>>> {
-        let chain_id = match common::consts::coin_to_chain_id(&message.coin) {
+        let chain_id = match common::utils::coin_to_chain_id(&message.coin) {
             Some(chain) => chain.to_string(),
             None => anyhow::bail!("Unsupported coin: {}", message.coin),
         };
@@ -41,16 +41,9 @@ where
                 anyhow::bail!("Duplicated address: {}", wallet_address.deposit_address)
             }
             None => {
-                // Generate Address for the user in requested wallet
-                let mut forward_version = 0;
-                if chain_id == common::consts::chain::id::ETHEREUM
-                    || chain_id == common::consts::chain::id::ETHEREUM_TESTNET
-                {
-                    forward_version = 1;
-                }
                 let wallet_address = self
                     .kms
-                    .generate_address(&message.wallet_id, &message.coin, forward_version)
+                    .generate_address(&message.wallet_id, &message.coin)
                     .await?;
 
                 match self.database.has_address(&wallet_address, &chain_id)? {

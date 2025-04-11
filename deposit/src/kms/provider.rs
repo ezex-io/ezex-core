@@ -6,6 +6,5 @@ pub trait KMSProvider: Sync + Send + 'static {
         &self,
         wallet_id: &str,
         coin: &str,
-        forward_version: i32,
     ) -> anyhow::Result<String>;
 }

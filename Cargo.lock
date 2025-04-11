@@ -580,6 +580,11 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "613afe47fcd5fac7ccf1db93babcb082c5994d996f20b8b159f2ad1658eb5724"
 
 [[package]]
+name = "chains-rs"
+version = "0.1.1"
+source = "git+https://github.com/ezex-io/chains#5341b5c362cdc898ebb37a74ffa04221c6b2e63f"
+
+[[package]]
 name = "chrono"
 version = "0.4.39"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1169,6 +1174,7 @@ dependencies = [
  "anyhow",
  "assert_cmd",
  "async-trait",
+ "chains-rs",
  "chrono",
  "common",
  "ctrlc",

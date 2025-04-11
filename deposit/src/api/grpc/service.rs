@@ -36,9 +36,9 @@ where
             ));
         }
 
-        let chain_id = match common::consts::coin_to_chain_id(&request.into_inner().coin) {
+        let chain_id = match common::utils::coin_to_chain_id(&request.into_inner().coin) {
             Some(chain) => chain,
-            None => return Err(Status::new(Code::NotFound, "coin type not found")),
+            None => return Err(Status::new(Code::NotFound, "coin not defined")),
         };
         let address = self
             .database

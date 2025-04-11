@@ -15,7 +15,6 @@ impl AddressCmd {
     pub async fn execute(&self) {
         match self.to_owned() {
             AddressCmd::Generate {
-
                 wallet_id,
                 identifier,
                 forward_version,

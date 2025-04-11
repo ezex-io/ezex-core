@@ -1,7 +1,7 @@
 use crate::database::provider::DatabaseProvider;
 use crate::kms::provider::KMSProvider;
 use crate::vault::Vault;
-use common::redis_bus::RedisBusTrait;
+use common::redis::redis_bus::RedisBusTrait;
 use common::topic::*;
 
 pub struct RedisBus<D, K>
@@ -47,7 +47,7 @@ where
     }
 
     fn module_name(&self) -> String {
-        common::consts::module::name::DEPOSIT.to_string()
+        common::topic::deposit::NAME.to_string()
     }
 
     fn module_version(&self) -> String {

@@ -24,3 +24,6 @@ pub fn error_to_tonic_status(e: anyhow::Error) -> tonic::Status {
     tonic::Status::internal(e.to_string())
 }
 
+pub fn coin_to_chain_id(coin: &str) ->Option<String>  {
+    todo!()
+}

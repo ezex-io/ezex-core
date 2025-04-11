@@ -1,3 +1,4 @@
+pub const NAME: &str = "deposit";
 
 pub mod address {
     use crate::topic::TopicMessage;

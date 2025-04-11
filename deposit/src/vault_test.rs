@@ -12,7 +12,6 @@ async fn test_generate_address_with_invalid_wallet_id() {
 
     let db = crate::database::postgres::postgres::PostgresDB::new(&pq_db.con_string(), 1).unwrap();
 
-
     let config = VaultConfig::default();
     let vault = Vault::new(db, kms, config);
 
@@ -140,7 +139,6 @@ async fn test_check_duplicate_address() {
     let pq_db = PostgresTestDB::new();
 
     let db = crate::database::postgres::postgres::PostgresDB::new(&pq_db.con_string(), 1).unwrap();
-
 
     let config = VaultConfig::default();
     let vault = Vault::new(db, kms, config);

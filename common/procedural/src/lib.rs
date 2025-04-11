@@ -9,7 +9,7 @@ pub fn derive_topic(input: TokenStream) -> TokenStream {
     let ident = &ast.ident;
     match topic_name(ast.clone()) {
         Ok(topic_name) => {
-            let gen = quote! {
+            let gen_code = quote! {
 
                 impl #ident {
                     pub const name: &'static str = #topic_name;
@@ -19,7 +19,7 @@ pub fn derive_topic(input: TokenStream) -> TokenStream {
                     fn as_any(&self) -> &dyn std::any::Any { self }
                 }
             };
-            gen.into()
+            gen_code.into()
         }
         Err(msg) => {
             let tokens = quote_spanned! { proc_macro2::Span::call_site() =>
