@@ -16,8 +16,8 @@ use ezex_deposit::{
     },
     config::Config as VaultConfig,
     database::postgres::{
-        config::Config as PostgresConfig,
-        postgres::PostgresDB,
+        Config as PostgresConfig,
+        PostgresDB,
     },
     redis_bus::RedisBus,
     vault::Vault,
@@ -53,6 +53,7 @@ pub struct StartCmd {
 
 impl StartCmd {
     pub async fn execute(&self) {
+        //TODO: need to handle errors properly instead of just unwraps
         logger::init_logger(&self.logger_config);
         common::utils::exit_on_panic();
 
@@ -80,6 +81,10 @@ impl StartCmd {
         });
 
         let pq = PostgresDB::from_config(&self.postgres_config).unwrap();
+
+        //TODO: Create a KMS instance
+
+        let vault = Vault::new(pq, kms, self.vault_config.clone());
 
         let bus_handle = task::spawn(async move {
             let bus = RedisBus::new(vault);
