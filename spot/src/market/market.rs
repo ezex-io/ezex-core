@@ -1,12 +1,26 @@
-use anyhow::{Context, Result};
+use anyhow::{
+    Context,
+    Result,
+};
 use crossbeam::channel;
-use std::sync::{Arc, RwLock};
-use std::thread;
+use std::{
+    sync::{
+        Arc,
+        RwLock,
+    },
+    thread,
+};
 
-use crate::models::trade_order::TradeOrder;
-use crate::models::matched_trade::MatchedTrade;
-use crate::order_book::order_book::OrderBook;
-use crate::order_book::order_book::OrderBookTrait;
+use crate::{
+    models::{
+        matched_trade::MatchedTrade,
+        trade_order::TradeOrder,
+    },
+    order_book::order_book::{
+        OrderBook,
+        OrderBookTrait,
+    },
+};
 
 type Task = Box<dyn FnOnce(&mut OrderBook) + Send + 'static>;
 
@@ -121,7 +135,10 @@ impl Market {
 #[cfg(test)]
 mod tests {
     use crate::{
-        models::trade_order::{OrderSide, OrderType},
+        models::trade_order::{
+            OrderSide,
+            OrderType,
+        },
         tests::test_models,
     };
 

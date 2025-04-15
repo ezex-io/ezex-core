@@ -1,7 +1,15 @@
 use proc_macro::TokenStream;
-use quote::{quote, quote_spanned};
-use syn::{self};
-use syn::{DeriveInput, Lit, Meta, NestedMeta};
+use quote::{
+    quote,
+    quote_spanned,
+};
+use syn::{
+    self,
+    DeriveInput,
+    Lit,
+    Meta,
+    NestedMeta,
+};
 
 #[proc_macro_derive(Topic, attributes(topic_name))]
 pub fn derive_topic(input: TokenStream) -> TokenStream {

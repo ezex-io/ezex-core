@@ -1,23 +1,51 @@
-use std::str::FromStr;
-use std::sync::Arc;
-
-use super::helper::convert_trades;
-use super::spot::{CancelAllOrdersRequest, CancelAllOrdersResponse};
-use crate::grpc::spot::spot_service_server::SpotService;
-use crate::grpc::spot::{
-    AddOrderRequest, AddOrderResponse, CancelOrderRequest, CancelOrderResponse,
-    CreateMarketRequest, CreateMarketResponse, StartMarketRequest, StartMarketResponse,
-    StopMarketRequest, StopMarketResponse,
+use std::{
+    str::FromStr,
+    sync::Arc,
 };
-use crate::market::market_manager::MarketManager;
-use crate::models::trade_order::TradeOrder;
-use crate::utils;
-use anyhow::{Context, Result};
+
+use super::{
+    helper::convert_trades,
+    spot::{
+        CancelAllOrdersRequest,
+        CancelAllOrdersResponse,
+    },
+};
+use crate::{
+    grpc::spot::{
+        spot_service_server::SpotService,
+        AddOrderRequest,
+        AddOrderResponse,
+        CancelOrderRequest,
+        CancelOrderResponse,
+        CreateMarketRequest,
+        CreateMarketResponse,
+        StartMarketRequest,
+        StartMarketResponse,
+        StopMarketRequest,
+        StopMarketResponse,
+    },
+    market::market_manager::MarketManager,
+    models::trade_order::TradeOrder,
+    utils,
+};
+use anyhow::{
+    Context,
+    Result,
+};
 use bigdecimal::BigDecimal;
-use database::models::NewMarket;
-use database::persistence::{self, ThreadSafePersistence};
+use database::{
+    models::NewMarket,
+    persistence::{
+        self,
+        ThreadSafePersistence,
+    },
+};
 use tokio::sync::RwLock;
-use tonic::{Request, Response, Status};
+use tonic::{
+    Request,
+    Response,
+    Status,
+};
 
 pub struct SpotServiceImpl {
     pub market_manager: Arc<RwLock<MarketManager>>,

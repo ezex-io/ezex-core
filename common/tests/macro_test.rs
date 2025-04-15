@@ -1,6 +1,9 @@
 use common::topic::TopicMessage;
 use procedural::Topic;
-use serde::{Deserialize, Serialize};
+use serde::{
+    Deserialize,
+    Serialize,
+};
 
 #[test]
 fn test_stream_name() {

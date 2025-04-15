@@ -2,11 +2,22 @@ pub mod config;
 
 use crate::logger::config::Config;
 use log::LevelFilter;
-use log4rs::append::console::ConsoleAppender;
-use log4rs::append::file::FileAppender;
-use log4rs::config::{Appender, Config as Log4rsConfig, Logger, Root};
-use log4rs::encode::json::JsonEncoder;
-use log4rs::encode::pattern::PatternEncoder;
+use log4rs::{
+    append::{
+        console::ConsoleAppender,
+        file::FileAppender,
+    },
+    config::{
+        Appender,
+        Config as Log4rsConfig,
+        Logger,
+        Root,
+    },
+    encode::{
+        json::JsonEncoder,
+        pattern::PatternEncoder,
+    },
+};
 use std::str::FromStr;
 
 pub fn init_logger(config: &Config) {

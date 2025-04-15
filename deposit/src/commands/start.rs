@@ -1,17 +1,38 @@
-use common::logger::config::Config as LoggerConfig;
-use common::redis_bus::{RedisBusTrait, RedisClient, RedisConfig, StreamBus};
-use common::{logger, topic};
-use deposit_vault::api::grpc::config::Config as GRPCConfig;
-use deposit_vault::api::grpc::server;
-use deposit_vault::config::Config as VaultConfig;
-use deposit_vault::database::postgres::config::Config as PostgresConfig;
-use deposit_vault::database::postgres::postgres::PostgresDB;
-use deposit_vault::redis_bus::RedisBus;
-use deposit_vault::vault::Vault;
+use common::{
+    logger,
+    logger::config::Config as LoggerConfig,
+    redis::redis_bus::{
+        RedisBusTrait,
+        RedisClient,
+        RedisConfig,
+        StreamBus,
+    },
+    topic,
+};
+use ezex_deposit::{
+    api::grpc::{
+        config::Config as GRPCConfig,
+        server,
+    },
+    config::Config as VaultConfig,
+    database::postgres::{
+        config::Config as PostgresConfig,
+        postgres::PostgresDB,
+    },
+    redis_bus::RedisBus,
+    vault::Vault,
+};
 use futures::channel::mpsc::channel;
-use std::sync::Arc;
-use std::sync::atomic::{AtomicBool, Ordering};
-use std::thread;
+use std::{
+    sync::{
+        Arc,
+        atomic::{
+            AtomicBool,
+            Ordering,
+        },
+    },
+    thread,
+};
 use structopt::StructOpt;
 use tokio::task;
 
@@ -49,7 +70,7 @@ impl StartCmd {
 
         let redis_handle = task::spawn(async move {
             let keys: Vec<&str> = vec![topic::deposit::address::Generate::name];
-            redis.run(&keys, read_tx).await;
+            redis.run(&keys, &mut read_tx).await;
         });
 
         let grpc_config = self.grpc_config.clone();

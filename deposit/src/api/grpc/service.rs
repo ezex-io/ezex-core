@@ -1,7 +1,16 @@
-use crate::api::grpc::deposit::vault_service_server::VaultService;
-use crate::api::grpc::deposit::*;
-use crate::database::provider::DatabaseReader;
-use tonic::{Code, Request, Response, Status};
+use crate::{
+    api::grpc::deposit::{
+        vault_service_server::VaultService,
+        *,
+    },
+    database::provider::DatabaseReader,
+};
+use tonic::{
+    Code,
+    Request,
+    Response,
+    Status,
+};
 
 pub struct VaultServiceImpl<D>
 where

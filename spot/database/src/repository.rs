@@ -1,10 +1,18 @@
 // repository.rs
 // Implementation of repository pattern for database operations
 
-use super::db::{DbConnection, DbPool};
-use super::models::*;
-use super::provider::{DatabaseReader, DatabaseWriter};
-use super::schema::*;
+use super::{
+    db::{
+        DbConnection,
+        DbPool,
+    },
+    models::*,
+    provider::{
+        DatabaseReader,
+        DatabaseWriter,
+    },
+    schema::*,
+};
 use anyhow::Result;
 use bigdecimal::BigDecimal;
 use diesel::prelude::*;
@@ -86,10 +94,10 @@ impl Repository {
 
         let result = diesel::update(orders::table.find(order_id))
             .set((
-                orders::remain.eq(remain),                
+                orders::remain.eq(remain),
                 orders::filled_base.eq(filled_base),
                 orders::filled_quote.eq(filled_quote),
-                orders::filled_fee.eq(filled_fee),                
+                orders::filled_fee.eq(filled_fee),
                 orders::status.eq(status),
                 orders::update_time.eq(current_time),
             ))

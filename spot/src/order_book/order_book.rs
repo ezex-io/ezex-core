@@ -1,9 +1,26 @@
-use crate::models::trade_order::{OrderSide, OrderType, TradeOrder};
-use crate::models::matched_trade::{MarketRole, MatchedTrade};
-use crate::utils::{self, generate_uuid_id, is_zero};
+use crate::{
+    models::{
+        matched_trade::{
+            MarketRole,
+            MatchedTrade,
+        },
+        trade_order::{
+            OrderSide,
+            OrderType,
+            TradeOrder,
+        },
+    },
+    utils::{
+        self,
+        generate_uuid_id,
+        is_zero,
+    },
+};
 use bigdecimal::BigDecimal;
-use std::collections::BinaryHeap;
-use std::collections::HashMap;
+use std::collections::{
+    BinaryHeap,
+    HashMap,
+};
 
 use colored::*;
 
@@ -30,7 +47,6 @@ use colored::*;
 ///
 /// Note: This implementation is simplified and may not cover all edge cases
 /// and optimizations required for a production-grade exchange.
-///
 pub(crate) trait OrderBookTrait {
     fn new() -> Self;
     fn add_order(&mut self, order: TradeOrder) -> Vec<MatchedTrade>;
@@ -331,7 +347,11 @@ impl OrderBook {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::models::trade_order::{OrderSide, OrderType, TradeOrder};
+    use crate::models::trade_order::{
+        OrderSide,
+        OrderType,
+        TradeOrder,
+    };
     use bigdecimal::BigDecimal;
     use env_logger;
     use std::str::FromStr;
