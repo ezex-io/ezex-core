@@ -1,33 +1,23 @@
-use crate::{
-    config::Config,
-    database::provider::DatabaseProvider,
-    kms::provider::KMSProvider,
-};
+use crate::{config::Config, database::provider::DatabaseProvider, kms::provider::KMSProvider};
 use common::topic::*;
 use log::info;
 
-#[derive(Clone)]
-pub struct Vault<D, K>
+pub struct Deposit<D, K>
 where
     D: DatabaseProvider,
     K: KMSProvider,
 {
     database: D,
     kms: K,
-    config: Config,
 }
 
-impl<D, K> Vault<D, K>
+impl<D, K> Deposit<D, K>
 where
     D: DatabaseProvider,
     K: KMSProvider,
 {
-    pub fn new(db: D, kms: K, config: Config) -> Self {
-        Vault {
-            database: db,
-            kms,
-            config,
-        }
+    pub fn new(db: D, kms: K, config: &Config) -> Self {
+        Deposit { database: db, kms }
     }
 
     pub async fn process_address_generate(
@@ -40,7 +30,7 @@ where
         };
         match self.database.get_address(&message.user_id, &chain_id)? {
             Some(wallet_address) => {
-                anyhow::bail!("Duplicated address: {}", wallet_address.deposit_address)
+                anyhow::bail!("Duplicated address: {}", wallet_address.address)
             }
             None => {
                 let wallet_address = self
@@ -79,5 +69,5 @@ where
 }
 
 #[cfg(test)]
-#[path = "./vault_test.rs"]
-mod vault_test;
+#[path = "./deposit_test.rs"]
+mod deposit_test;

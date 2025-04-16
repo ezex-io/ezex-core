@@ -1,53 +1,32 @@
 use common::{
     logger,
     logger::config::Config as LoggerConfig,
-    redis::redis_bus::{
-        RedisBusTrait,
-        RedisClient,
-        RedisConfig,
-        StreamBus,
-    },
+    redis::redis_bus::{RedisBusTrait, RedisClient, RedisConfig, StreamBus},
     topic,
 };
 use ezex_deposit::{
-    api::grpc::{
-        config::Config as GRPCConfig,
-        server,
-    },
+    api::grpc::{config::Config as GRPCConfig, server},
     config::Config as VaultConfig,
-    database::postgres::{
-        config::Config as PostgresConfig,
-        postgres::PostgresDB,
-    },
+    database::postgres::{config::Config as PostgresConfig, postgres::PostgresDB},
+    deposit::Deposit,
     redis_bus::RedisBus,
-    vault::Vault,
 };
 use futures::channel::mpsc::channel;
 use std::{
     sync::{
         Arc,
-        atomic::{
-            AtomicBool,
-            Ordering,
-        },
+        atomic::{AtomicBool, Ordering},
     },
     thread,
 };
-use structopt::StructOpt;
 use tokio::task;
 
-#[derive(Debug, StructOpt)]
-#[structopt(name = "start")]
+#[derive(Debug, Args)]
 pub struct StartCmd {
-    #[structopt(flatten)]
     pub grpc_config: GRPCConfig,
-    #[structopt(flatten)]
     pub postgres_config: PostgresConfig,
-    #[structopt(flatten)]
     pub redis_config: RedisConfig,
-    #[structopt(flatten)]
     pub vault_config: VaultConfig,
-    #[structopt(flatten)]
     pub logger_config: LoggerConfig,
 }
 
@@ -73,7 +52,7 @@ impl StartCmd {
             redis.run(&keys, &mut read_tx).await;
         });
 
-        let grpc_config = self.grpc_config.clone();
+        let grpc_config = self.grpc_config;
         let pq = PostgresDB::from_config(&self.postgres_config).unwrap();
         let grpc_handle = task::spawn(async move {
             server::start_server(&grpc_config, pq).await.unwrap();

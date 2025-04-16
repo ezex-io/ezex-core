@@ -1,8 +1,5 @@
 use bigdecimal::BigDecimal;
-use serde::{
-    Deserialize,
-    Serialize,
-};
+use serde::{Deserialize, Serialize};
 use std::convert::TryFrom;
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct MatchedTrade {

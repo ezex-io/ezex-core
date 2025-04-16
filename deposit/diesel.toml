@@ -2,8 +2,7 @@
 # see https://diesel.rs/guides/configuring-diesel-cli
 
 [print_schema]
-file = "src/schema.rs"
-custom_type_derives = ["diesel::query_builder::QueryId", "Clone"]
+file = "./src/database/postgres/schema.rs"
 
 [migrations_directory]
-dir = "/home/mostafa/Projects/batrade/batrade-core/deposit/migrations"
+dir = "./src/database/postgres/migrations"

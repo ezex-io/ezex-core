@@ -1,5 +1,5 @@
 pub mod deposit {
-    tonic::include_proto!("deposit_vault");
+    tonic::include_proto!("deposit");
 }
 pub mod config;
 pub mod server;

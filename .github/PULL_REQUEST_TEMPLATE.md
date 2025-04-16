@@ -1,8 +1,7 @@
 ## Description
 
-<!-- A few sentences describing the pull request. -->
+> A clear description of what the pull request does.
 
-### Related issue(s)
+## Related Issue
 
-<!-- If this PR closes any issues, mention them here. -->
-Fixing: #<ISSUE_ID>
+Fixes # (issue)

@@ -1,19 +1,9 @@
 use super::market::Market;
-use crate::models::{
-    matched_trade::MatchedTrade,
-    trade_order::TradeOrder,
-};
-use anyhow::{
-    anyhow,
-    Context,
-    Result,
-};
+use crate::models::{matched_trade::MatchedTrade, trade_order::TradeOrder};
+use anyhow::{anyhow, Context, Result};
 use std::{
     collections::HashMap,
-    sync::{
-        Arc,
-        RwLock,
-    },
+    sync::{Arc, RwLock},
 };
 
 #[derive(Debug, Clone)]
@@ -134,10 +124,7 @@ impl MarketManager {
 #[cfg(test)]
 mod tests {
     use crate::{
-        models::trade_order::{
-            OrderSide,
-            OrderType,
-        },
+        models::trade_order::{OrderSide, OrderType},
         tests::test_models,
     };
 

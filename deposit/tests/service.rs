@@ -3,18 +3,11 @@ mod topics;
 
 use assert_cmd::prelude::*;
 use async_std::task::sleep;
-use common::test_tools::{
-    self,
-    *,
-};
+use common::test_tools::{self, *};
 use deposit_vault::api::grpc::deposit::vault_service_client::VaultServiceClient;
 use httpmock::prelude::*;
 use std::{
-    process::{
-        Child,
-        Command,
-        Stdio,
-    },
+    process::{Child, Command, Stdio},
     time::Duration,
 };
 use tonic::transport::Channel;

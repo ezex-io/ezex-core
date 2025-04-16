@@ -1,13 +1,5 @@
-use crate::{
-    config::Config as VaultConfig,
-    vault::Vault,
-};
-use common::{
-    consts::*,
-    test_tools,
-    test_tools::PostgresTestDB,
-    topic::deposit,
-};
+use crate::config::Config;
+use common::{consts::*, test_tools, test_tools::PostgresTestDB, topic::deposit};
 use mockall::predicate::*;
 use serde_json::json;
 
@@ -17,7 +9,7 @@ async fn test_generate_address_with_invalid_wallet_id() {
 
     let db = crate::database::postgres::postgres::PostgresDB::new(&pq_db.con_string(), 1).unwrap();
 
-    let config = VaultConfig::default();
+    let config = Config::default();
     let vault = Vault::new(db, kms, config);
 
     let user_id = "Alice".to_string();

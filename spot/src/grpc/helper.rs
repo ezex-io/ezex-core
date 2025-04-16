@@ -1,27 +1,13 @@
 use crate::{
-    grpc::spot::{
-        AddOrderRequest,
-        ProtoTrade,
-    },
+    grpc::spot::{AddOrderRequest, ProtoTrade},
     models::{
         matched_trade::MatchedTrade,
-        trade_order::{
-            OrderSide,
-            OrderType,
-            TradeOrder,
-        },
+        trade_order::{OrderSide, OrderType, TradeOrder},
     },
     utils,
 };
-use anyhow::{
-    anyhow,
-    Context,
-    Result,
-};
-use bigdecimal::{
-    BigDecimal,
-    Zero,
-};
+use anyhow::{anyhow, Context, Result};
+use bigdecimal::{BigDecimal, Zero};
 use std::str::FromStr;
 use tonic::Status;
 

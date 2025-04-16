@@ -1,11 +1,6 @@
-use serde::{
-    Deserialize,
-    Serialize,
-};
-use structopt::StructOpt;
+use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Serialize, Deserialize, StructOpt)]
+#[derive(Debug)]
 pub struct Config {
-    #[structopt(long = "grpc-address", env = "GRPC_ADDRESS")]
     pub address: String,
 }

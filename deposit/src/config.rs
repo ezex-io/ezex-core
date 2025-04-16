@@ -1,8 +1,4 @@
-use serde::{
-    Deserialize,
-    Serialize,
-};
-use structopt::StructOpt;
+use serde::{Deserialize, Serialize};
 
-#[derive(Default, Debug, Clone, Serialize, Deserialize, StructOpt)]
+#[derive(Debug)]
 pub struct Config {}

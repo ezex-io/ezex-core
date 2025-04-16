@@ -1,12 +1,7 @@
-use anyhow::{
-    Context,
-    Result,
-};
+use anyhow::{Context, Result};
 use ezex_deposit::kms::create_provider;
-use structopt::StructOpt;
 
-#[derive(Debug, StructOpt, Clone)]
-#[structopt(name = "address")]
+#[derive(Debug)]
 pub enum AddressCmd {
     Generate {
         wallet_id: String,

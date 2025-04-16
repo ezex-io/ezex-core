@@ -1,12 +1,6 @@
-use erased_serde::{
-    Serialize,
-    Serializer,
-};
+use erased_serde::{Serialize, Serializer};
 use serde::de::Error;
-use std::{
-    any::Any,
-    fmt::Debug,
-};
+use std::{any::Any, fmt::Debug};
 
 pub mod deposit;
 

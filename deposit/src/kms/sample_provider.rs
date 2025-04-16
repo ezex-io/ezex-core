@@ -4,11 +4,8 @@ use async_trait::async_trait;
 pub struct SampleProvider {}
 
 impl SampleProvider {
-    #[allow(dead_code)]
     pub fn new() -> Self {
-        // TODO: use this, or add Default trait for struct
-        // initialization
-        Self { /* ... */ }
+        Self {}
     }
 }
 #[async_trait]

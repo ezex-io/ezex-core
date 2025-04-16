@@ -1,25 +1,17 @@
 use crate::{
-    api::grpc::deposit::{
-        vault_service_server::VaultService,
-        *,
-    },
+    api::grpc::deposit::{deposit_service_server::DepositService, *},
     database::provider::DatabaseReader,
 };
-use tonic::{
-    Code,
-    Request,
-    Response,
-    Status,
-};
+use tonic::{Code, Request, Response, Status};
 
-pub struct VaultServiceImpl<D>
+pub struct DepositServiceImpl<D>
 where
     D: DatabaseReader + Sync + Send + 'static,
 {
     database: D,
 }
 
-impl<D> VaultServiceImpl<D>
+impl<D> DepositServiceImpl<D>
 where
     D: DatabaseReader + Sync + Send + 'static,
 {
@@ -29,14 +21,14 @@ where
 }
 
 #[tonic::async_trait]
-impl<D> VaultService for VaultServiceImpl<D>
+impl<D> DepositService for DepositServiceImpl<D>
 where
     D: DatabaseReader + Sync + Send + 'static,
 {
     async fn get_address(
         &self,
-        request: Request<AddressRequest>,
-    ) -> anyhow::Result<Response<AddressResponse>, Status> {
+        request: Request<GetAddressRequest>,
+    ) -> anyhow::Result<Response<GetAddressResponse>, Status> {
         let user_id = request.get_ref().user_id.to_owned();
         if user_id.is_empty() && request.get_ref().coin.to_owned().is_empty() {
             return Err(Status::new(
@@ -55,8 +47,8 @@ where
             .map_err(common::utils::error_to_tonic_status)?;
 
         match address {
-            Some(addr) => Ok(Response::new(AddressResponse {
-                deposit_address: addr.deposit_address,
+            Some(addr) => Ok(Response::new(GetAddressResponse {
+                deposit_address: addr.address,
             })),
             None => Err(Status::new(Code::NotFound, "No deposit address")),
         }

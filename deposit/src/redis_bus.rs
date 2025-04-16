@@ -1,19 +1,12 @@
-use crate::{
-    database::provider::DatabaseProvider,
-    kms::provider::KMSProvider,
-    vault::Vault,
-};
-use common::{
-    redis::redis_bus::RedisBusTrait,
-    topic::*,
-};
+use crate::{database::provider::DatabaseProvider, deposit::Deposit, kms::provider::KMSProvider};
+use common::{redis::redis_bus::RedisBusTrait, topic::*};
 
 pub struct RedisBus<D, K>
 where
     D: DatabaseProvider,
     K: KMSProvider,
 {
-    vault: Vault<D, K>,
+    vault: Deposit<D, K>,
 }
 
 impl<D, K> RedisBus<D, K>
@@ -21,7 +14,7 @@ where
     D: DatabaseProvider,
     K: KMSProvider,
 {
-    pub fn new(vault: Vault<D, K>) -> Self {
+    pub fn new(vault: Deposit<D, K>) -> Self {
         Self { vault }
     }
 }

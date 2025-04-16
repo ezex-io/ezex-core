@@ -1,0 +1,25 @@
+name: Testing (Rust)
+permissions:
+  contents: read
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  testing:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Tests
+        run: cargo test

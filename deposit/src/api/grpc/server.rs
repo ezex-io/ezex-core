@@ -1,15 +1,11 @@
 use crate::{
     api::grpc::{
-        config::Config,
-        deposit::vault_service_server::VaultServiceServer,
-        service::VaultServiceImpl,
+        config::Config, deposit::deposit_service_server::DepositServiceServer,
+        service::DepositServiceImpl,
     },
     database::provider::DatabaseReader,
 };
-use log::{
-    error,
-    info,
-};
+use log::{error, info};
 use tonic::transport::Server;
 
 pub async fn start_server<D>(
@@ -20,12 +16,12 @@ where
     D: DatabaseReader + Sync + Send + 'static,
 {
     // defining address for our service
-    let vault_service_impl = VaultServiceImpl::new(db);
+    let service = DepositServiceImpl::new(db);
     let address = config.address.parse().unwrap();
-    info!("Vault Server listening on {}", address);
+    info!("Deposit Server listening on {}", address);
 
     if let Err(e) = Server::builder()
-        .add_service(VaultServiceServer::new(vault_service_impl))
+        .add_service(DepositServiceServer::new(service))
         .serve(address)
         .await
     {
