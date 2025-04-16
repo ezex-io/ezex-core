@@ -2,9 +2,11 @@ use anyhow::{
     Context,
     Result,
 };
-use ezex_deposit::kms::create_provider;
+use clap::{Args, Subcommand};
+use ezex_deposit::kms::{self, ezex::ezexKms, provider::KMSProvider};
 
-#[derive(Debug)]
+
+#[derive(Debug, Subcommand)]
 pub enum AddressCmd {
     Generate {
         wallet_id: String,
@@ -28,15 +30,8 @@ impl AddressCmd {
                 identifier,
                 forward_version: _,
             } => {
-                // Get provider type from environment variable, with a default
-                let provider_type =
-                    std::env::var("KMS_PROVIDER_TYPE").unwrap_or_else(|_| "sample".to_string());
-
                 // Create provider with proper error handling
-                let provider = create_provider(&provider_type).context(format!(
-                    "Failed to create KMS provider of type '{}'",
-                    provider_type
-                ))?;
+                let provider = ezexKms::new()?;
 
                 // Generate address with proper error handling
                 let address = provider

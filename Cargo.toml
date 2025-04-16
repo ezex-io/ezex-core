@@ -1,6 +1,7 @@
 [workspace]
 members = ["deposit", "spot", "spot/database", "common", "common/procedural"]
-resolver = "3"                                                                # see: https://doc.rust-lang.org/cargo/reference/resolver.html#resolver-versions
+# see: https://doc.rust-lang.org/cargo/reference/resolver.html#resolver-versions
+resolver = "3"
 
 [workspace.dependencies]
 tonic = { version = "0.12" }
@@ -12,7 +13,8 @@ uuid = { version = "1.16", features = ["v4", "serde"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 serde_redis = { git = "https://github.com/ezex-io/serde-redis" }
-redis_stream_bus = { git = "https://github.com/ezex-io/redis-stream-bus" }
+# redis_stream_bus = { git = "https://github.com/ezex-io/redis-stream-bus" }
+redis_stream_bus = { path = "../redis-stream-bus" }
 chains-rs = { git = "https://github.com/ezex-io/chains" }
 async-trait = "0.1"
 async-std = "1.13"

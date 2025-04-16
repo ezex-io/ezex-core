@@ -20,7 +20,7 @@ where
     D: DatabaseProvider,
     K: KMSProvider,
 {
-    pub fn new(db: D, kms: K, config: &Config) -> Self {
+    pub fn new(db: D, kms: K) -> Self {
         Deposit { database: db, kms }
     }
 

@@ -1,25 +1,25 @@
 use clap::Parser;
-use common::topic::deposit;
+
 
 mod cmd;
 
-#[derive(Parser, Debug)]
+#[derive(Debug, Parser)]
 #[command(
     name = env!("CARGO_PKG_NAME"),
     version = env!("CARGO_PKG_VERSION"),
     author = env!("CARGO_PKG_AUTHORS"),
     about = env!("CARGO_PKG_DESCRIPTION")
 )]
-pub struct Deposit {
+pub struct CLI {
     #[command(subcommand)]
-    pub commands: cmd::Commands,
+    pub cmd: cmd::Cmd,
 }
 
 #[tokio::main]
 async fn main() {
-    // dotenv::dotenv().ok();
+    dotenv::dotenv().ok();
 
-    // let deposit = Deposit::parse();
-    // deposit::handle(cli);
-    todo!()
+    let cli = CLI::parse();
+    cmd::handle(cli.cmd).await;
+
 }

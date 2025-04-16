@@ -1,51 +1,36 @@
-use clap::Args;
+use clap::{command, Args, Parser};
 use common::{
     logger,
     logger::config::Config as LoggerConfig,
-    redis::redis_bus::{
-        RedisBusTrait,
-        RedisClient,
-        RedisConfig,
-        StreamBus,
-    },
+    redis::redis_bus::{RedisBusTrait, RedisClient, RedisConfig, StreamBus},
     topic,
 };
 use ezex_deposit::{
-    api::grpc::{
-        config::Config as GRPCConfig,
-        server,
-    },
-    config::Config as VaultConfig,
-    database::postgres::{
-        config::Config as PostgresConfig,
-        postgres::PostgresDB,
-    },
-    deposit::Deposit,
-    redis_bus::RedisBus,
+    grpc::{config::Config as GRPCConfig, server}, database::postgres::{config::Config as PostgresConfig, postgres::PostgresDB}, deposit::Deposit, kms, redis::RedisBus
 };
 use futures::channel::mpsc::channel;
 use std::{
     sync::{
         Arc,
-        atomic::{
-            AtomicBool,
-            Ordering,
-        },
+        atomic::{AtomicBool, Ordering},
     },
     thread,
 };
 use tokio::task;
 
-#[derive(Debug, Args)]
-pub struct StartCmd {
+#[derive(Debug, Clone, Parser)]
+pub struct StartArgs {
+    #[command(flatten, next_help_heading="grpc")]
     pub grpc_config: GRPCConfig,
+    #[command(flatten, next_help_heading="postgres")]
     pub postgres_config: PostgresConfig,
+    #[command(flatten, next_help_heading="redis")]
     pub redis_config: RedisConfig,
-    pub vault_config: VaultConfig,
+    #[command(flatten, next_help_heading="logger")]
     pub logger_config: LoggerConfig,
 }
 
-impl StartCmd {
+impl StartArgs {
     pub async fn execute(&self) {
         logger::init_logger(&self.logger_config);
         common::utils::exit_on_panic();
@@ -57,24 +42,25 @@ impl StartCmd {
         })
         .expect("Error setting Ctrl-C handler");
 
-        let redis = RedisClient::from_config(&self.redis_config).unwrap();
-        let (read_tx, read_rx) = channel(100);
+        let mut redis = RedisClient::from_config(&self.redis_config).unwrap();
+        let (mut read_tx, read_rx) = channel(100);
         let add_tx = redis.xadd_sender();
         let ack_tx = redis.xack_sender();
 
         let redis_handle = task::spawn(async move {
             let keys: Vec<&str> = vec![topic::deposit::address::Generate::name];
-            redis.run(&keys, &mut read_tx).await;
+            redis.run(&keys, &mut read_tx).await.unwrap();
         });
 
-        let grpc_config = self.grpc_config;
+        let grpc_config = self.grpc_config.clone();
         let pq = PostgresDB::from_config(&self.postgres_config).unwrap();
         let grpc_handle = task::spawn(async move {
             server::start_server(&grpc_config, pq).await.unwrap();
         });
 
         let pq = PostgresDB::from_config(&self.postgres_config).unwrap();
-
+        let kms = kms::ezex::ezexKms::new().unwrap();
+        let deposit = Deposit::new(pq,  kms);
         let bus_handle = task::spawn(async move {
             let bus = RedisBus::new(deposit);
             bus.run(read_rx, add_tx, ack_tx).await;

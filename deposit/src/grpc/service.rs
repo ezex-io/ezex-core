@@ -1,5 +1,5 @@
 use crate::{
-    api::grpc::deposit::{
+    grpc::deposit::{
         deposit_service_server::DepositService,
         *,
     },

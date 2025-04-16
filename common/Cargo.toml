@@ -4,6 +4,7 @@ name = "common"
 version = "1.0.0"
 
 [dependencies]
+clap = { workspace = true }
 anyhow = { workspace = true }
 chrono = { workspace = true }
 serde = { workspace = true, features = ["derive"] }

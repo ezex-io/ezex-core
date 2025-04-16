@@ -719,6 +719,7 @@ dependencies = [
  "async-std",
  "async-trait",
  "chrono",
+ "clap 4.5.36",
  "diesel 2.2.9",
  "erased-serde",
  "futures",
@@ -1257,6 +1258,7 @@ dependencies = [
  "ctrlc",
  "diesel 2.2.9",
  "diesel_migrations 2.2.0",
+ "dotenv",
  "futures",
  "httpmock",
  "log",
@@ -2909,16 +2911,15 @@ dependencies = [
 [[package]]
 name = "redis_stream_bus"
 version = "0.2.0"
-source = "git+https://github.com/ezex-io/redis-stream-bus#7e6459d73a713f891383686b06f8a5006603fc8a"
 dependencies = [
  "anyhow",
  "async-trait",
+ "clap 4.5.36",
  "futures",
  "futures-util",
  "log",
  "redis",
  "serde",
- "structopt",
 ]
 
 [[package]]
