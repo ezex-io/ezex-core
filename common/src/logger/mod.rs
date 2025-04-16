@@ -3,9 +3,20 @@ pub mod config;
 use crate::logger::config::Config;
 use log::LevelFilter;
 use log4rs::{
-    append::{console::ConsoleAppender, file::FileAppender},
-    config::{Appender, Config as Log4rsConfig, Logger, Root},
-    encode::{json::JsonEncoder, pattern::PatternEncoder},
+    append::{
+        console::ConsoleAppender,
+        file::FileAppender,
+    },
+    config::{
+        Appender,
+        Config as Log4rsConfig,
+        Logger,
+        Root,
+    },
+    encode::{
+        json::JsonEncoder,
+        pattern::PatternEncoder,
+    },
 };
 use std::str::FromStr;
 

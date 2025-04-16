@@ -1,3 +1,4 @@
+use clap::Parser;
 use common::topic::deposit;
 
 mod cmd;

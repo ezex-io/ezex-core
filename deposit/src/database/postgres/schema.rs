@@ -4,6 +4,7 @@ diesel::table! {
         id -> Uuid,
         status -> SmallInt,
         wallet_id -> Varchar,
+        chain_id -> Varchar,
         wallet_type -> Varchar,
         description -> Varchar,
         created_at -> Timestamp,
@@ -16,7 +17,7 @@ diesel::table! {
         id -> Uuid,
         user_id -> Varchar,
         chain_id -> Varchar,
-        generated_wallet_id -> Varchar,
+        wallet_id -> Varchar,
         address -> Varchar,
         created_at -> Timestamp,
     }

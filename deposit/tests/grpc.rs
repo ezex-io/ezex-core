@@ -1,6 +1,9 @@
 use crate::TestContext;
 use common::consts::asset;
-use deposit_vault::api::grpc::deposit::{AddressRequest, VersionRequest};
+use deposit_vault::api::grpc::deposit::{
+    AddressRequest,
+    VersionRequest,
+};
 
 pub async fn test_grpc_version(ctx: &mut TestContext) {
     let request = VersionRequest {};

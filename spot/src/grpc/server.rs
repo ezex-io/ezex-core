@@ -2,8 +2,14 @@ use database::persistence::ThreadSafePersistence;
 use std::sync::Arc;
 use tokio::sync::RwLock;
 
-use crate::grpc::{service::SpotServiceImpl, spot::spot_service_server::SpotServiceServer};
-use log::{error, info};
+use crate::grpc::{
+    service::SpotServiceImpl,
+    spot::spot_service_server::SpotServiceServer,
+};
+use log::{
+    error,
+    info,
+};
 use tonic::transport::Server;
 
 use crate::market::market_manager::MarketManager;

@@ -1,7 +1,10 @@
 pub mod provider;
 mod sample_provider;
 
-use anyhow::{Result, anyhow};
+use anyhow::{
+    Result,
+    anyhow,
+};
 use provider::KMSProvider;
 
 pub fn create_provider(provider_type: &str) -> Result<Box<dyn KMSProvider>> {

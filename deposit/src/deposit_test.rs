@@ -1,5 +1,10 @@
 use crate::config::Config;
-use common::{consts::*, test_tools, test_tools::PostgresTestDB, topic::deposit};
+use common::{
+    consts::*,
+    test_tools,
+    test_tools::PostgresTestDB,
+    topic::deposit,
+};
 use mockall::predicate::*;
 use serde_json::json;
 

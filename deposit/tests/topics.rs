@@ -2,7 +2,11 @@ use crate::TestContext;
 use common::{
     consts::*,
     test_tools,
-    topic::{TopicMessage, deposit, general},
+    topic::{
+        TopicMessage,
+        deposit,
+        general,
+    },
 };
 use httpmock::Method::POST;
 

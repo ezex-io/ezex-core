@@ -1,4 +1,7 @@
-use anyhow::{Context, Result};
+use anyhow::{
+    Context,
+    Result,
+};
 use ezex_deposit::kms::create_provider;
 
 #[derive(Debug)]

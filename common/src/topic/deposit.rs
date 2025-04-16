@@ -3,7 +3,10 @@ pub const NAME: &str = "deposit";
 pub mod address {
     use crate::topic::TopicMessage;
     use procedural::Topic;
-    use serde::{Deserialize, Serialize};
+    use serde::{
+        Deserialize,
+        Serialize,
+    };
 
     #[derive(Clone, Serialize, Deserialize, Debug, Topic)]
     #[topic_name("deposit:address:generate")]
@@ -27,7 +30,10 @@ pub mod address {
 pub mod transaction {
     use crate::topic::TopicMessage;
     use procedural::Topic;
-    use serde::{Deserialize, Serialize};
+    use serde::{
+        Deserialize,
+        Serialize,
+    };
 
     #[derive(Clone, Serialize, Deserialize, Debug, Topic, Eq, PartialEq)]
     #[topic_name("deposit:transaction:claim")]

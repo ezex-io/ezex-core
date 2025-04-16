@@ -1,4 +1,8 @@
-use crate::{config::Config, database::provider::DatabaseProvider, kms::provider::KMSProvider};
+use crate::{
+    config::Config,
+    database::provider::DatabaseProvider,
+    kms::provider::KMSProvider,
+};
 use common::topic::*;
 use log::info;
 

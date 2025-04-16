@@ -1,5 +1,9 @@
 use diesel::{
-    pg::Pg, prelude::*, query_builder::*, query_dsl::methods::LoadQuery, sql_types::BigInt,
+    pg::Pg,
+    prelude::*,
+    query_builder::*,
+    query_dsl::methods::LoadQuery,
+    sql_types::BigInt,
 };
 
 pub trait Paginate: Sized {

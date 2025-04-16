@@ -1,13 +1,25 @@
+use clap::Args;
 use common::{
     logger,
     logger::config::Config as LoggerConfig,
-    redis::redis_bus::{RedisBusTrait, RedisClient, RedisConfig, StreamBus},
+    redis::redis_bus::{
+        RedisBusTrait,
+        RedisClient,
+        RedisConfig,
+        StreamBus,
+    },
     topic,
 };
 use ezex_deposit::{
-    api::grpc::{config::Config as GRPCConfig, server},
+    api::grpc::{
+        config::Config as GRPCConfig,
+        server,
+    },
     config::Config as VaultConfig,
-    database::postgres::{config::Config as PostgresConfig, postgres::PostgresDB},
+    database::postgres::{
+        config::Config as PostgresConfig,
+        postgres::PostgresDB,
+    },
     deposit::Deposit,
     redis_bus::RedisBus,
 };
@@ -15,7 +27,10 @@ use futures::channel::mpsc::channel;
 use std::{
     sync::{
         Arc,
-        atomic::{AtomicBool, Ordering},
+        atomic::{
+            AtomicBool,
+            Ordering,
+        },
     },
     thread,
 };
@@ -61,7 +76,7 @@ impl StartCmd {
         let pq = PostgresDB::from_config(&self.postgres_config).unwrap();
 
         let bus_handle = task::spawn(async move {
-            let bus = RedisBus::new(vault);
+            let bus = RedisBus::new(deposit);
             bus.run(read_rx, add_tx, ack_tx).await;
         });
 

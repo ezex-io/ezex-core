@@ -3,7 +3,11 @@ use std::str::FromStr;
 use bigdecimal::BigDecimal;
 use chrono::Utc;
 
-use crate::models::trade_order::{OrderSide, OrderType, TradeOrder};
+use crate::models::trade_order::{
+    OrderSide,
+    OrderType,
+    TradeOrder,
+};
 
 pub fn create_order(
     side: OrderSide,

@@ -1,12 +1,19 @@
-use crate::{database::provider::DatabaseProvider, deposit::Deposit, kms::provider::KMSProvider};
-use common::{redis::redis_bus::RedisBusTrait, topic::*};
+use crate::{
+    database::provider::DatabaseProvider,
+    deposit::Deposit,
+    kms::provider::KMSProvider,
+};
+use common::{
+    redis::redis_bus::RedisBusTrait,
+    topic::*,
+};
 
 pub struct RedisBus<D, K>
 where
     D: DatabaseProvider,
     K: KMSProvider,
 {
-    vault: Deposit<D, K>,
+    deposit: Deposit<D, K>,
 }
 
 impl<D, K> RedisBus<D, K>
@@ -15,7 +22,7 @@ where
     K: KMSProvider,
 {
     pub fn new(vault: Deposit<D, K>) -> Self {
-        Self { vault }
+        Self { deposit: vault }
     }
 }
 
@@ -34,7 +41,7 @@ where
             deposit::address::Generate::name => {
                 let message: deposit::address::Generate = serde_json::from_str(msg)?;
 
-                self.vault.process_address_generate(message).await
+                self.deposit.process_address_generate(message).await
             }
             k => {
                 log::warn!("unimplemented key: {}", k);

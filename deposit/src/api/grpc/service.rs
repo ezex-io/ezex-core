@@ -1,8 +1,16 @@
 use crate::{
-    api::grpc::deposit::{deposit_service_server::DepositService, *},
+    api::grpc::deposit::{
+        deposit_service_server::DepositService,
+        *,
+    },
     database::provider::DatabaseReader,
 };
-use tonic::{Code, Request, Response, Status};
+use tonic::{
+    Code,
+    Request,
+    Response,
+    Status,
+};
 
 pub struct DepositServiceImpl<D>
 where

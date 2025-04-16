@@ -2,9 +2,15 @@
 // Implementation of repository pattern for database operations
 
 use super::{
-    db::{DbConnection, DbPool},
+    db::{
+        DbConnection,
+        DbPool,
+    },
     models::*,
-    provider::{DatabaseReader, DatabaseWriter},
+    provider::{
+        DatabaseReader,
+        DatabaseWriter,
+    },
     schema::*,
 };
 use anyhow::Result;

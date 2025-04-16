@@ -1,11 +1,15 @@
 use crate::{
     api::grpc::{
-        config::Config, deposit::deposit_service_server::DepositServiceServer,
+        config::Config,
+        deposit::deposit_service_server::DepositServiceServer,
         service::DepositServiceImpl,
     },
     database::provider::DatabaseReader,
 };
-use log::{error, info};
+use log::{
+    error,
+    info,
+};
 use tonic::transport::Server;
 
 pub async fn start_server<D>(

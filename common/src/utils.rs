@@ -1,5 +1,8 @@
 use anyhow;
-use std::{panic, process};
+use std::{
+    panic,
+    process,
+};
 
 pub fn value_or_error(value: &serde_json::Value, key: &str) -> anyhow::Result<serde_json::Value> {
     match value.get(key) {

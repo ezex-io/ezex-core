@@ -1,9 +1,14 @@
 use crate::database::{
     postgres::postgres::PostgresDB,
-    provider::{DatabaseReader, DatabaseWriter},
+    provider::{
+        DatabaseReader,
+        DatabaseWriter,
+    },
 };
-use common::consts::*;
-use common::test_tools::PostgresTestDB;
+use common::{
+    consts::*,
+    test_tools::PostgresTestDB,
+};
 
 #[test]
 fn test_save_address() {

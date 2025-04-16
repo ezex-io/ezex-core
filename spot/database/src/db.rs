@@ -3,7 +3,10 @@
 
 use diesel::{
     pg::PgConnection,
-    r2d2::{self, ConnectionManager},
+    r2d2::{
+        self,
+        ConnectionManager,
+    },
 };
 // Type alias for a pooled PostgreSQL connection
 pub type DbPool = r2d2::Pool<ConnectionManager<PgConnection>>;

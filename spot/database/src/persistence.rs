@@ -1,8 +1,18 @@
 use anyhow::Result;
-use log::{debug, info};
-use std::sync::{Arc, Mutex};
+use log::{
+    debug,
+    info,
+};
+use std::sync::{
+    Arc,
+    Mutex,
+};
 
-use crate::{db::establish_connection_pool, models::*, repository::Repository};
+use crate::{
+    db::establish_connection_pool,
+    models::*,
+    repository::Repository,
+};
 
 /// ThreadSafePersistence provides a thread-safe way to access the repository
 /// for persisting entities to the database.
