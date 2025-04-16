@@ -1,4 +1,7 @@
-use crate::types::{Wallet, Address};
+use crate::types::{
+    Address,
+    Wallet,
+};
 
 /// Provides read access to the database.
 pub trait DatabaseReader {

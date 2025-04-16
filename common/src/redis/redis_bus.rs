@@ -130,7 +130,6 @@ mod tests {
         redis::*,
         topic::TopicMessage,
     };
-    use async_std::task;
     use futures::{
         SinkExt,
         StreamExt,
@@ -142,6 +141,7 @@ mod tests {
         Deserialize,
         Serialize,
     };
+    use tokio::task;
 
     struct TestStreamBus;
 

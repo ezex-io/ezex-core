@@ -1,6 +1,5 @@
 use clap::Parser;
 
-
 mod cmd;
 
 #[derive(Debug, Parser)]
@@ -21,5 +20,4 @@ async fn main() {
 
     let cli = CLI::parse();
     cmd::handle(cli.cmd).await;
-
 }

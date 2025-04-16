@@ -1,9 +1,9 @@
 use crate::{
+    database::provider::DatabaseReader,
     grpc::deposit::{
         deposit_service_server::DepositService,
         *,
     },
-    database::provider::DatabaseReader,
 };
 use tonic::{
     Code,

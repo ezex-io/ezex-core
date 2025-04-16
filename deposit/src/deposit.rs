@@ -1,7 +1,7 @@
 use crate::{
     config::Config,
     database::provider::DatabaseProvider,
-    kms::provider::KMSProvider,
+    kms::provider::KmsProvider,
 };
 use common::topic::*;
 use log::info;
@@ -9,7 +9,7 @@ use log::info;
 pub struct Deposit<D, K>
 where
     D: DatabaseProvider,
-    K: KMSProvider,
+    K: KmsProvider,
 {
     database: D,
     kms: K,
@@ -18,7 +18,7 @@ where
 impl<D, K> Deposit<D, K>
 where
     D: DatabaseProvider,
-    K: KMSProvider,
+    K: KmsProvider,
 {
     pub fn new(db: D, kms: K) -> Self {
         Deposit { database: db, kms }

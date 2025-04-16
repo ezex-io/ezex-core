@@ -1,18 +1,40 @@
-use clap::{command, Args, Parser};
+use clap::{
+    Args,
+    Parser,
+    command,
+};
 use common::{
     logger,
     logger::config::Config as LoggerConfig,
-    redis::redis_bus::{RedisBusTrait, RedisClient, RedisConfig, StreamBus},
+    redis::redis_bus::{
+        RedisBusTrait,
+        RedisClient,
+        RedisConfig,
+        StreamBus,
+    },
     topic,
 };
 use ezex_deposit::{
-    grpc::{config::Config as GRPCConfig, server}, database::postgres::{config::Config as PostgresConfig, postgres::PostgresDB}, deposit::Deposit, kms, redis::RedisBus
+    database::postgres::{
+        config::Config as PostgresConfig,
+        postgres::PostgresDB,
+    },
+    deposit::Deposit,
+    grpc::{
+        config::Config as GRPCConfig,
+        server,
+    },
+    kms,
+    redis::RedisBus,
 };
 use futures::channel::mpsc::channel;
 use std::{
     sync::{
         Arc,
-        atomic::{AtomicBool, Ordering},
+        atomic::{
+            AtomicBool,
+            Ordering,
+        },
     },
     thread,
 };
@@ -20,13 +42,13 @@ use tokio::task;
 
 #[derive(Debug, Clone, Parser)]
 pub struct StartArgs {
-    #[command(flatten, next_help_heading="grpc")]
+    #[command(flatten, next_help_heading = "grpc")]
     pub grpc_config: GRPCConfig,
-    #[command(flatten, next_help_heading="postgres")]
+    #[command(flatten, next_help_heading = "postgres")]
     pub postgres_config: PostgresConfig,
-    #[command(flatten, next_help_heading="redis")]
+    #[command(flatten, next_help_heading = "redis")]
     pub redis_config: RedisConfig,
-    #[command(flatten, next_help_heading="logger")]
+    #[command(flatten, next_help_heading = "logger")]
     pub logger_config: LoggerConfig,
 }
 
@@ -60,13 +82,13 @@ impl StartArgs {
 
         let pq = PostgresDB::from_config(&self.postgres_config).unwrap();
         let kms = kms::ezex::ezexKms::new().unwrap();
-        let deposit = Deposit::new(pq,  kms);
+        let deposit = Deposit::new(pq, kms);
         let bus_handle = task::spawn(async move {
             let bus = RedisBus::new(deposit);
             bus.run(read_rx, add_tx, ack_tx).await;
         });
 
-        log::info!("Vault started...");
+        log::info!("Deposit started...");
         while running.load(Ordering::SeqCst) {
             thread::sleep(std::time::Duration::from_secs(1));
         }

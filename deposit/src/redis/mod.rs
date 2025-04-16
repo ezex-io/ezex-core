@@ -1,7 +1,7 @@
 use crate::{
     database::provider::DatabaseProvider,
     deposit::Deposit,
-    kms::provider::KMSProvider,
+    kms::provider::KmsProvider,
 };
 use common::{
     redis::redis_bus::RedisBusTrait,
@@ -11,7 +11,7 @@ use common::{
 pub struct RedisBus<D, K>
 where
     D: DatabaseProvider,
-    K: KMSProvider,
+    K: KmsProvider,
 {
     deposit: Deposit<D, K>,
 }
@@ -19,10 +19,10 @@ where
 impl<D, K> RedisBus<D, K>
 where
     D: DatabaseProvider,
-    K: KMSProvider,
+    K: KmsProvider,
 {
-    pub fn new(vault: Deposit<D, K>) -> Self {
-        Self { deposit: vault }
+    pub fn new(deposit: Deposit<D, K>) -> Self {
+        Self { deposit }
     }
 }
 
@@ -30,7 +30,7 @@ where
 impl<D, K> RedisBusTrait for RedisBus<D, K>
 where
     D: DatabaseProvider + Send + Sync,
-    K: KMSProvider + Send + Sync,
+    K: KmsProvider + Send + Sync,
 {
     async fn process_message(
         &mut self,

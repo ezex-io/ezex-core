@@ -1,10 +1,10 @@
 use crate::{
+    database::provider::DatabaseReader,
     grpc::{
         config::Config,
         deposit::deposit_service_server::DepositServiceServer,
         service::DepositServiceImpl,
     },
-    database::provider::DatabaseReader,
 };
 use log::{
     error,

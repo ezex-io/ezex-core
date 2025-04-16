@@ -1,8 +1,14 @@
-use super::{models::*, schema::*};
+use super::{
+    models::*,
+    schema::*,
+};
 use crate::{
     database::{
         postgres::config::Config,
-        provider::{DatabaseReader, DatabaseWriter},
+        provider::{
+            DatabaseReader,
+            DatabaseWriter,
+        },
     },
     types,
 };
@@ -10,9 +16,16 @@ use diesel::{
     expression::is_aggregate::No,
     pg::PgConnection,
     prelude::*,
-    r2d2::{ConnectionManager, Pool},
+    r2d2::{
+        ConnectionManager,
+        Pool,
+    },
 };
-use diesel_migrations::{EmbeddedMigrations, MigrationHarness, embed_migrations};
+use diesel_migrations::{
+    EmbeddedMigrations,
+    MigrationHarness,
+    embed_migrations,
+};
 
 pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!("./src/database/postgres/migrations");
 

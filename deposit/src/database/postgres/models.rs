@@ -45,7 +45,6 @@ impl From<Wallet> for types::Wallet {
     }
 }
 
-
 impl From<Address> for types::Address {
     fn from(addr: Address) -> Self {
         types::Address {

@@ -716,7 +716,6 @@ name = "common"
 version = "1.0.0"
 dependencies = [
  "anyhow",
- "async-std",
  "async-trait",
  "chrono",
  "clap 4.5.36",

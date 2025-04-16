@@ -17,7 +17,6 @@ serde_redis = { git = "https://github.com/ezex-io/serde-redis" }
 redis_stream_bus = { path = "../redis-stream-bus" }
 chains-rs = { git = "https://github.com/ezex-io/chains" }
 async-trait = "0.1"
-async-std = "1.13"
 redis = "0.29"
 log = "0.4"
 log4rs = "1.3"

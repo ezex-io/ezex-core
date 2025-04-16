@@ -1,9 +1,9 @@
 mod address;
 mod start;
 
-use clap::{Parser};
-use start::StartArgs;
 use address::AddressCmd;
+use clap::Parser;
+use start::StartArgs;
 
 #[derive(Debug, Parser)]
 pub enum Cmd {
@@ -14,9 +14,9 @@ pub enum Cmd {
 
 pub async fn handle(cmd: Cmd) {
     match cmd {
-        Cmd::Start(args) => { todo!()},
-        Cmd::Address(cmd) =>{
-
-        } ,
+        Cmd::Start(args) => {
+            todo!()
+        }
+        Cmd::Address(cmd) => {}
     }
 }
