@@ -6,6 +6,7 @@ use diesel::{
     sql_types::BigInt,
 };
 
+// TODO Add test for me
 pub trait Paginate: Sized {
     fn paginate(self, page: i64) -> Paginated<Self>;
 }

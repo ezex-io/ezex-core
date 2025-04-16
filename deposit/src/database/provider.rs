@@ -1,31 +1,36 @@
-use crate::model::*;
+use crate::types::{
+    Address,
+    Wallet,
+};
 
+/// Provides read access to the database.
 pub trait DatabaseReader {
-    /// "get_wallet" will return wallet Details for existing identifier's wallet
+    /// Returns wallet details for the given `chain_id`, if it exists.
     ///
     /// # Errors
-    /// - could not retrieve wallet associated to identifier it will Error out
-    fn get_wallet(&self, chain_id: &str) -> anyhow::Result<Option<Wallet>>;
+    /// Returns an error if the wallet associated with the identifier cannot be retrieved.
+    fn get_wallet(&self, chain_id: &str) -> anyhow::Result<Wallet>;
 
-    /// "get_address" will return address Details for user if is stored
+    /// Returns the address details for a user, if one has been generated for the specified chain.
     ///
     /// # Errors
-    /// - could not retrieve address associated to user it will Error out
-    fn get_address(&self, user_id: &str, chain_id: &str) -> anyhow::Result<Option<WalletAddress>>;
+    /// Returns an error if the address associated with the user cannot be retrieved.
+    fn get_address(&self, user_id: &str, chain_id: &str) -> anyhow::Result<Option<Address>>;
 
-    /// "has_address" will return false, if address is not exist in database.
+    /// Checks whether the specified address exists for the given chain.
     ///
     /// # Errors
-    /// - return true, if address is already generated and save in database.
+    /// Returns an error if the check fails.
     fn has_address(&self, address: &str, chain_id: &str) -> anyhow::Result<bool>;
 }
 
+/// Provides write access to the database.
 pub trait DatabaseWriter {
-    /// "assign_address" will assign new Address to a user
+    /// Assigns a new address to a user.
     ///
     /// # Errors
-    /// - will Error if there is a identifier+user_id already in datastore
-    /// - it will fail if be not able to store address for any reason
+    /// Returns an error if an address is already assigned for the given identifier and user ID,
+    /// or if the address cannot be stored for any reason.
     fn assign_address(
         &self,
         user_id: &str,
@@ -35,6 +40,7 @@ pub trait DatabaseWriter {
     ) -> anyhow::Result<()>;
 }
 
+/// Combines both read and write capabilities for database access.
 pub trait DatabaseProvider: DatabaseReader + DatabaseWriter {}
 
 impl<T: DatabaseReader + DatabaseWriter> DatabaseProvider for T {}

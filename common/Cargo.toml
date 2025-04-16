@@ -4,20 +4,18 @@ name = "common"
 version = "1.0.0"
 
 [dependencies]
+clap = { workspace = true }
 anyhow = { workspace = true }
 chrono = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
-strum = { workspace = true, features = ["derive"] }
 tokio = { workspace = true, features = ["macros"] }
 log = { workspace = true }
 log4rs = { workspace = true }
 rand = { workspace = true }
-structopt = { workspace = true }
 serde_json = { workspace = true }
 serde_redis = { workspace = true }
 redis_stream_bus = { workspace = true }
 futures = { workspace = true }
-strum_macros = { workspace = true }
 thiserror = { workspace = true }
 uuid = { workspace = true }
 tonic = { workspace = true }
@@ -25,45 +23,9 @@ diesel = { workspace = true }
 async-trait = { workspace = true }
 redis = { workspace = true, features = ["streams"] }
 procedural = { path = "./procedural" }
-
+portpicker = { workspace = true }
 erased-serde = "0.3"
 indexmap = "2.7"
 
-# [dependencies.async-std]
-# features = ["attributes"]
-# version = "1"
-
-# [dependencies.diesel]
-# features = ["postgres", "uuidv07", "r2d2"]
-# version = "1.4"
-
-# [dependencies.procedural]
-# path = "./procedural"
-
-# [dependencies.redis]
-# features = ["tokio-comp", "streams", "r2d2", "connection-manager"]
-# version = "0.21"
-
-# [dependencies.serde]
-# features = ["derive"]
-# version = "1.0"
-
-# [dependencies.structopt]
-# default-features = false
-# version = "0.3"
-
-# [dependencies.strum]
-# features = ["derive"]
-# version = "0.21"
-
-# [dependencies.tokio]
-# features = ["macros"]
-# version = "1.9"
-
-# [dependencies.tonic]
-# version = "0.5.2"
-
 [dev-dependencies]
 mockall = { workspace = true }
-portpicker = { workspace = true }
-async-std = { workspace = true }

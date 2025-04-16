@@ -4,3 +4,4 @@ pub mod logger;
 pub mod redis;
 pub mod topic;
 pub mod utils;
+pub mod testsuite;

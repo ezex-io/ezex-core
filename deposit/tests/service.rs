@@ -2,13 +2,13 @@ mod grpc;
 mod topics;
 
 use assert_cmd::prelude::*;
-use async_std::task::sleep;
-use common::test_tools::{
-    self,
-    *,
+
+use common::testsuite::{
+    self, postgres::PostgresTestDB, redis::RedisTestClient, *
 };
-use deposit_vault::api::grpc::deposit::vault_service_client::VaultServiceClient;
+use ezex_deposit::grpc::deposit::deposit_service_client::DepositServiceClient;
 use httpmock::prelude::*;
+use tokio::time::sleep;
 use std::{
     process::{
         Child,
@@ -23,7 +23,7 @@ pub struct TestContext {
     /// pq_db is the instance of Postgres Database.
     /// It should be alive otherwise it will be dropped at the end of `setup` function.
     pub pq_db: PostgresTestDB,
-    pub grpc_client: VaultServiceClient<Channel>,
+    pub grpc_client: DepositServiceClient<Channel>,
     pub redis: RedisTestClient,
     pub child: Child,
 }
@@ -32,19 +32,19 @@ impl TestContext {
         let pq_db = PostgresTestDB::new();
 
         let database_url = pq_db.con_string();
-        let redis_con_string = test_tools::redis_test_con_string();
-        let grpc_address = format!("127.0.0.1:{}", test_tools::pick_unused_port());
+        let grpc_address = format!("127.0.0.1:{}", testsuite::pick_unused_port());
 
-        let redis_group = "deposit-vault-group-1";
-        let redis = RedisTestClient::new(&redis_con_string, redis_group);
+        let redis_group = "deposit-group-1";
+        let redis = RedisTestClient::new( redis_group);
+        // let redis_con_string = redis.
 
-        let mut cmd = Command::cargo_bin("deposit-vault").unwrap();
+        let mut cmd = Command::cargo_bin("ezex-deposit").unwrap();
         let child = cmd
             .arg("start")
             .env("LOG_LEVEL", "debug")
             .env("GRPC_ADDRESS", grpc_address.clone())
             .env("REDIS_CONNECTION_STRING", redis_con_string)
-            .env("REDIS_CONSUMER", "deposit-vault-consumer-1")
+            .env("REDIS_CONSUMER", "deposit-consumer-1")
             .env("REDIS_GROUP_NAME", redis_group)
             .env("DATABASE_URL", database_url)
             .stdin(Stdio::piped())
@@ -57,7 +57,7 @@ impl TestContext {
             counter += 1;
 
             let client_res =
-                VaultServiceClient::connect(format!("http://{}", grpc_address.clone())).await;
+                DepositServiceClient::connect(format!("http://{}", grpc_address.clone())).await;
             if counter < 50 && client_res.is_err() {
                 sleep(Duration::from_millis(100)).await;
                 continue;

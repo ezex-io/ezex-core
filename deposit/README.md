@@ -4,9 +4,6 @@ ezeX Deposit is a service to create and manage users' deposit addresses.
 Generated addresses are assign to the user for the depositing cryptocurrencies.
 User can only have one deposit address per Blockchain protocol.
 
-## Security
-
-
 ## How to run
 
 To run the service execute this command:

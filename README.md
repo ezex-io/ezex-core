@@ -4,7 +4,7 @@ ezeX-Core contains core services of ezeX exchange.
 
 | Service name                         |
 | ------------------------------------ |
-| [Deposit](./deposit/vault/README.md) |
+| [Deposit](./deposit/README.md) |
 
 ## Getting Started
 

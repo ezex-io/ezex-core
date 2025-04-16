@@ -1,0 +1,29 @@
+name: Building
+permissions:
+  contents: read
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  building:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: installing dependencies
+        run: |
+          sudo apt install -y protobuf-compiler
+
+      - name: Building the Project
+        run: cargo build --release

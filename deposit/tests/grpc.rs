@@ -1,7 +1,6 @@
 use crate::TestContext;
-use common::consts::asset;
-use deposit_vault::api::grpc::deposit::{
-    AddressRequest,
+use ezex_deposit::grpc::deposit::{
+    GetAddressRequest,
     VersionRequest,
 };
 
@@ -12,9 +11,9 @@ pub async fn test_grpc_version(ctx: &mut TestContext) {
 }
 
 pub async fn test_get_address(ctx: &mut TestContext) {
-    let request = AddressRequest {
+    let request = GetAddressRequest {
         user_id: "alice".to_string(),
-        coin: asset::name::TBTC.to_string(),
+        coin: "coin".to_string(),
     };
     let res = ctx.grpc_client.get_address(request).await.unwrap();
     assert_eq!(
@@ -24,9 +23,9 @@ pub async fn test_get_address(ctx: &mut TestContext) {
 }
 
 pub async fn test_address_not_exist(ctx: &mut TestContext) {
-    let request = AddressRequest {
+    let request = GetAddressRequest {
         user_id: "bob".to_string(),
-        coin: asset::name::TBTC.to_string(),
+        coin: "coin".to_string(),
     };
     let res = ctx.grpc_client.get_address(request).await;
     assert!(res.is_err());

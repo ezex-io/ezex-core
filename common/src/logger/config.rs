@@ -1,13 +1,14 @@
-use serde::{
-    Deserialize,
-    Serialize,
-};
-use structopt::StructOpt;
+use clap::Args;
 
-#[derive(Debug, StructOpt, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Args)]
+#[group(id = "logger")]
 pub struct Config {
-    #[structopt(long = "log-file", env = "LOG_FILE", default_value = "")]
+    #[arg(long = "logger-file", env = "EZEX_DEPOSIT_LOGGER_FILE")]
     pub file: String,
-    #[structopt(long = "log-level", env = "LOG_LEVEL", default_value = "trace")]
+    #[arg(
+        long = "logger-level",
+        env = "EZEX_DEPOSIT_LOGGER_LEVEL",
+        default_value = "info"
+    )]
     pub level: String,
 }
