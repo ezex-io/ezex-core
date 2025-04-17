@@ -4,11 +4,7 @@ use quote::{
     quote_spanned,
 };
 use syn::{
-    self,
-    DeriveInput,
-    Lit,
-    Meta,
-    NestedMeta,
+    self, parse_macro_input, DeriveInput, Lit, Meta, NestedMeta
 };
 
 #[proc_macro_derive(Topic, attributes(topic_name))]
@@ -40,7 +36,7 @@ pub fn derive_topic(input: TokenStream) -> TokenStream {
 
 pub(crate) fn topic_name(input: DeriveInput) -> Result<Lit, String> {
     let attrs = input.attrs;
-    match attrs.get(0) {
+    match attrs.first() {
         Some(attr) => match attr.parse_meta() {
             Ok(meta) => {
                 let name = meta.path().get_ident();
@@ -60,4 +56,65 @@ pub(crate) fn topic_name(input: DeriveInput) -> Result<Lit, String> {
         },
         None => Err("Need topic_name".to_owned()),
     }
+}
+
+/// custom derive macro to generate prefix for env vars
+#[proc_macro_derive(EnvPrefix, attributes(prefix))]
+pub fn derive_env_prefix(input: TokenStream) -> TokenStream {
+    let ast = parse_macro_input!(input as DeriveInput);
+
+    // println!("Debug: All attributes: {:?}", ast.attrs);
+
+    let prefix = ast.attrs.iter()
+        .find(|attr| attr.path.is_ident("prefix"))
+        .and_then(|attr| {
+            match attr.parse_meta() {
+                Ok(meta) => {
+                    match meta {
+                        Meta::NameValue(name_value) => {
+                            if let Lit::Str(s) = name_value.lit {
+                                Some(s.value())
+                            } else {
+                                None
+                            }
+                        },
+                        _ => None
+                    }
+                },
+                Err(_) => None
+            }
+        })
+        .unwrap_or_else(|| "EZEX".to_string());
+
+    let name = &ast.ident;
+
+    let r#gen = quote! {
+        impl #name {
+            pub fn prepend_envs() {
+                use std::env;
+                use clap::Args;
+
+                let cmd = <Self as Args>::augment_args(clap::Command::new(""));
+                for arg in cmd.get_arguments() {
+                    if let Some(env_var) = arg.get_env() {
+                        if let Some(env_name) = env_var.to_str() {
+                            // get the original value
+                            if let Ok(value) = env::var(env_name) {
+                                // create prefixed var name
+                                let prefixed_var = format!("{}_{}", #prefix, env_name);
+                                println!("Debug: Setting {} = {}", prefixed_var, value);
+                                // set the new env var
+                                unsafe {
+                                    env::set_var(&prefixed_var, &value);
+                                }
+                                println!("Debug: Verifying {} = {:?}", prefixed_var, env::var(&prefixed_var));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    };
+
+    r#gen.into()
 }
