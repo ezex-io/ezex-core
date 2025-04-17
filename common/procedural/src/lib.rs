@@ -4,7 +4,12 @@ use quote::{
     quote_spanned,
 };
 use syn::{
-    self, parse_macro_input, DeriveInput, Lit, Meta, NestedMeta
+    self,
+    DeriveInput,
+    Lit,
+    Meta,
+    NestedMeta,
+    parse_macro_input,
 };
 
 #[proc_macro_derive(Topic, attributes(topic_name))]
@@ -65,24 +70,22 @@ pub fn derive_env_prefix(input: TokenStream) -> TokenStream {
 
     // println!("Debug: All attributes: {:?}", ast.attrs);
 
-    let prefix = ast.attrs.iter()
+    let prefix = ast
+        .attrs
+        .iter()
         .find(|attr| attr.path.is_ident("prefix"))
-        .and_then(|attr| {
-            match attr.parse_meta() {
-                Ok(meta) => {
-                    match meta {
-                        Meta::NameValue(name_value) => {
-                            if let Lit::Str(s) = name_value.lit {
-                                Some(s.value())
-                            } else {
-                                None
-                            }
-                        },
-                        _ => None
+        .and_then(|attr| match attr.parse_meta() {
+            Ok(meta) => match meta {
+                Meta::NameValue(name_value) => {
+                    if let Lit::Str(s) = name_value.lit {
+                        Some(s.value())
+                    } else {
+                        None
                     }
-                },
-                Err(_) => None
-            }
+                }
+                _ => None,
+            },
+            Err(_) => None,
         })
         .unwrap_or_else(|| "EZEX".to_string());
 
