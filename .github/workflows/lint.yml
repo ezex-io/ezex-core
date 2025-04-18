@@ -1,4 +1,8 @@
 name: Lint and Format Check
+env:
+  CARGO_TERM_COLOR: always
+  RUST_TOOLCHAIN: stable
+  RUST_TOOLCHAIN_NIGHTLY: nightly
 permissions:
   contents: read
 
@@ -14,15 +18,25 @@ jobs:
 
     steps:
       - name: Install Rust
-        uses: actions-rs/toolchain@v1
+        uses: dtolnay/rust-toolchain@nightly
         with:
-          toolchain: stable
+          toolchain: ${{env.RUST_TOOLCHAIN_NIGHTLY}}
+          components: clippy, rustfmt
 
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - uses: Swatinem/rust-cache@v2
+        with:
+          env-vars: "RUST_TOOLCHAIN=${{env.RUST_TOOLCHAIN_NIGHTLY}}"
+
+      - name: Install Protoc
+        uses: arduino/setup-protoc@v3
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Check Formatting
-        run: cargo fmt --check
+        run: cargo +nightly fmt --all -- --check
 
       - name: Run Clippy
         run: cargo clippy -- -D warnings
