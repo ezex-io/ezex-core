@@ -30,6 +30,11 @@ jobs:
         with:
           env-vars: "RUST_TOOLCHAIN=${{env.RUST_TOOLCHAIN_NIGHTLY}}"
 
+      - name: Install Protoc
+        uses: arduino/setup-protoc@v3
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Check Formatting
         run: cargo +nightly fmt --all -- --check
 
