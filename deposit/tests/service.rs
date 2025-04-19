@@ -3,20 +3,13 @@ mod topics;
 
 use assert_cmd::prelude::*;
 
-use common::testsuite::{
-    self, postgres::PostgresTestDB, redis::RedisTestClient, *
-};
+use common::testsuite::{self, postgres::PostgresTestDB, redis::RedisTestClient};
 use ezex_deposit::grpc::deposit::deposit_service_client::DepositServiceClient;
-use httpmock::prelude::*;
-use tokio::time::sleep;
 use std::{
-    process::{
-        Child,
-        Command,
-        Stdio,
-    },
+    process::{Child, Command, Stdio},
     time::Duration,
 };
+use tokio::time::sleep;
 use tonic::transport::Channel;
 
 pub struct TestContext {
@@ -27,6 +20,7 @@ pub struct TestContext {
     pub redis: RedisTestClient,
     pub child: Child,
 }
+
 impl TestContext {
     pub async fn setup() -> TestContext {
         let pq_db = PostgresTestDB::new();
@@ -35,8 +29,8 @@ impl TestContext {
         let grpc_address = format!("127.0.0.1:{}", testsuite::pick_unused_port());
 
         let redis_group = "deposit-group-1";
-        let redis = RedisTestClient::new( redis_group);
-        // let redis_con_string = redis.
+        let redis = RedisTestClient::new(redis_group);
+        let redis_con_string = RedisTestClient::redis_connection_string();
 
         let mut cmd = Command::cargo_bin("ezex-deposit").unwrap();
         let child = cmd
@@ -51,7 +45,6 @@ impl TestContext {
             .spawn()
             .expect("Failed to spawn child process");
 
-        // Make sure gRPC server is up (in 5 seconds)
         let mut counter: i32 = 0;
         let client_res = loop {
             counter += 1;
@@ -81,7 +74,8 @@ impl TestContext {
 async fn test_deposit_vault() {
     let mut ctx = TestContext::setup().await;
     grpc::test_grpc_version(&mut ctx).await;
-    topics::test_generate_address(&mut ctx).await;
+    topics::test_generate_valid_address(&mut ctx).await;
+    topics::test_generate_error_address(&mut ctx).await;
     grpc::test_get_address(&mut ctx).await;
     grpc::test_address_not_exist(&mut ctx).await;
     sleep(Duration::from_secs(5)).await;

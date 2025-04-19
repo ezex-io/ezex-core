@@ -1,7 +1,6 @@
-use serde::{
-    Deserialize,
-    Serialize,
-};
+use redis::{ErrorKind, RedisError, ToRedisArgs, Value};
+use serde::{Deserialize, Serialize};
+use serde_redis::decode;
 use std::collections::HashMap;
 
 #[derive(Serialize, Deserialize, Debug, Eq, PartialEq)]
@@ -12,22 +11,37 @@ pub struct StreamFields {
 }
 
 impl StreamFields {
-    pub fn encode(&self) -> Result<HashMap<String, redis::Value>, serde_redis::encode::Error> {
-        // serde_redis::encode::to_map(self)
-        todo!()
+    pub fn encode(&self) -> Result<HashMap<String, Value>, RedisError> {
+        let mut map = HashMap::new();
+
+        map.insert(
+            "module".to_string(),
+            Value::BulkString(self.module.clone().into_bytes()),
+        );
+        map.insert(
+            "correlation_id".to_string(),
+            match &self.correlation_id {
+                Some(id) => Value::BulkString(id.clone().into_bytes()),
+                None => Value::Nil,
+            },
+        );
+        map.insert(
+            "message".to_string(),
+            Value::BulkString(self.message.clone().into_bytes()),
+        );
+
+        Ok(map)
     }
 }
 
-pub fn decode(
-    fields: &HashMap<String, redis::Value>,
-) -> Result<StreamFields, serde_redis::decode::Error> {
+pub fn decode(fields: &HashMap<String, Value>) -> Result<StreamFields, decode::Error> {
     let mut vec = Vec::new();
     for (k, v) in fields {
-        vec.push(redis::Value::BulkString(k.as_bytes().to_vec()));
+        vec.push(Value::BulkString(k.as_bytes().to_vec()));
         vec.push(v.clone());
     }
 
-    let bulk = redis::Value::Array(vec);
-    let de = serde_redis::decode::Deserializer::new(bulk);
+    let bulk = Value::Array(vec);
+    let de = decode::Deserializer::new(bulk);
     Deserialize::deserialize(de)
 }

@@ -7,12 +7,12 @@ use redis::{
 use redis_stream_bus::client::Stream;
 use serde::de::DeserializeOwned;
 use serde_json::Value;
-use tokio::time::sleep;
 use std::{
     collections::{BTreeMap, HashMap},
     env,
     time::Duration,
 };
+use tokio::time::sleep;
 
 pub struct RedisTestClient {
     client: redis::Client,
@@ -20,7 +20,7 @@ pub struct RedisTestClient {
 }
 
 impl RedisTestClient {
-    fn redis_connection_string() -> String {
+    pub fn redis_connection_string() -> String {
         env::var("REDIS_CONNECTION_STRING")
             .unwrap_or_else(|_e| String::from("redis://localhost:6379"))
     }
