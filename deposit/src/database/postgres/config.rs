@@ -2,7 +2,7 @@ use clap::Args;
 use procedural::EnvPrefix;
 
 #[derive(Debug, Clone, Args, EnvPrefix)]
-#[prefix = "EZEX_DEPOSIT"]
+#[env_prefix = "EZEX_DEPOSIT"]
 #[group(id = "postgres")]
 pub struct Config {
     #[arg(long = "postgres-database-url", env = "POSTGRES_DATABASE_URL")]

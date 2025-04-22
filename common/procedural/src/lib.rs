@@ -64,7 +64,7 @@ pub(crate) fn topic_name(input: DeriveInput) -> Result<Lit, String> {
 }
 
 /// custom derive macro to generate prefix for env vars
-#[proc_macro_derive(EnvPrefix, attributes(prefix))]
+#[proc_macro_derive(EnvPrefix, attributes(env_prefix))]
 pub fn derive_env_prefix(input: TokenStream) -> TokenStream {
     let ast = parse_macro_input!(input as DeriveInput);
 
@@ -73,7 +73,7 @@ pub fn derive_env_prefix(input: TokenStream) -> TokenStream {
     let prefix = ast
         .attrs
         .iter()
-        .find(|attr| attr.path.is_ident("prefix"))
+        .find(|attr| attr.path.is_ident("env_prefix"))
         .and_then(|attr| match attr.parse_meta() {
             Ok(meta) => match meta {
                 Meta::NameValue(name_value) => {
@@ -87,7 +87,10 @@ pub fn derive_env_prefix(input: TokenStream) -> TokenStream {
             },
             Err(_) => None,
         })
-        .unwrap_or_else(|| "EZEX".to_string());
+        .unwrap_or_else(|| {
+            eprintln!("Warning: No #[prefix = \"...\"] attribute found, using default prefix \"\"");
+            "".to_string()
+        });
 
     let name = &ast.ident;
 
@@ -105,12 +108,10 @@ pub fn derive_env_prefix(input: TokenStream) -> TokenStream {
                             if let Ok(value) = env::var(env_name) {
                                 // create prefixed var name
                                 let prefixed_var = format!("{}_{}", #prefix, env_name);
-                                println!("Debug: Setting {} = {}", prefixed_var, value);
                                 // set the new env var
                                 unsafe {
                                     env::set_var(&prefixed_var, &value);
                                 }
-                                println!("Debug: Verifying {} = {:?}", prefixed_var, env::var(&prefixed_var));
                             }
                         }
                     }

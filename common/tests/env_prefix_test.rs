@@ -2,7 +2,7 @@ use clap::Args;
 use procedural::EnvPrefix;
 
 #[derive(Debug, Args, EnvPrefix)]
-#[prefix = "TEST"]
+#[env_prefix = "TEST"]
 struct TestConfig {
     #[arg(long, env = "SAMPLE_VAR")]
     sample: String,
