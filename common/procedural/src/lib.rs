@@ -87,10 +87,7 @@ pub fn derive_env_prefix(input: TokenStream) -> TokenStream {
             },
             Err(_) => None,
         })
-        .unwrap_or_else(|| {
-            eprintln!("Warning: No #[prefix = \"...\"] attribute found, using default prefix \"\"");
-            "".to_string()
-        });
+        .unwrap_or_default();
 
     let name = &ast.ident;
 
