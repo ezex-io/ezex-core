@@ -32,6 +32,7 @@ async-trait = { workspace = true }
 uuid = { workspace = true }
 chains-rs = { workspace = true }
 common = { path = "../common" }
+procedural ={ workspace = true }
 
 [dev-dependencies]
 mockall = { workspace = true }

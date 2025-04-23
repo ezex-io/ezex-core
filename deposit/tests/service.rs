@@ -4,11 +4,13 @@ mod topics;
 use assert_cmd::prelude::*;
 
 use common::testsuite::{
-    self, postgres::PostgresTestDB, redis::RedisTestClient, *
+    self,
+    postgres::PostgresTestDB,
+    redis::RedisTestClient,
+    *,
 };
 use ezex_deposit::grpc::deposit::deposit_service_client::DepositServiceClient;
 use httpmock::prelude::*;
-use tokio::time::sleep;
 use std::{
     process::{
         Child,
@@ -17,6 +19,7 @@ use std::{
     },
     time::Duration,
 };
+use tokio::time::sleep;
 use tonic::transport::Channel;
 
 pub struct TestContext {
@@ -35,7 +38,7 @@ impl TestContext {
         let grpc_address = format!("127.0.0.1:{}", testsuite::pick_unused_port());
 
         let redis_group = "deposit-group-1";
-        let redis = RedisTestClient::new( redis_group);
+        let redis = RedisTestClient::new(redis_group);
         // let redis_con_string = redis.
 
         let mut cmd = Command::cargo_bin("ezex-deposit").unwrap();
