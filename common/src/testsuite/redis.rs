@@ -1,14 +1,24 @@
 use crate::topic::TopicMessage;
-use diesel::{Connection, PgConnection, RunQueryDsl};
+use diesel::{
+    Connection,
+    PgConnection,
+    RunQueryDsl,
+};
 use redis::{
     Commands,
-    streams::{StreamPendingReply, StreamReadReply},
+    streams::{
+        StreamPendingReply,
+        StreamReadReply,
+    },
 };
 use redis_stream_bus::client::Stream;
 use serde::de::DeserializeOwned;
 use serde_json::Value;
 use std::{
-    collections::{BTreeMap, HashMap},
+    collections::{
+        BTreeMap,
+        HashMap,
+    },
     env,
     time::Duration,
 };
