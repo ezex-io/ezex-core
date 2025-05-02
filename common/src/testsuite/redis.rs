@@ -30,7 +30,7 @@ pub struct RedisTestClient {
 }
 
 impl RedisTestClient {
-    fn redis_connection_string() -> String {
+    pub fn redis_connection_string() -> String {
         env::var("REDIS_CONNECTION_STRING")
             .unwrap_or_else(|_e| String::from("redis://localhost:6379"))
     }
