@@ -720,6 +720,7 @@ dependencies = [
  "chrono",
  "clap 4.5.36",
  "diesel 2.2.9",
+ "dotenv",
  "erased-serde",
  "futures",
  "indexmap 2.9.0",
