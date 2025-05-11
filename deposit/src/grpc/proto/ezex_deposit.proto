@@ -1,0 +1,67 @@
+syntax = "proto3";
+package ezex_deposit;
+
+service DepositService {
+  rpc Version(VersionRequest) returns (VersionResponse);
+  rpc ListBlockchains(ListBlockchainsRequest) returns (ListBlockchainsResponse);
+  rpc ListBlockchainAssets(ListBlockchainAssetsRequest) returns (ListBlockchainAssetsResponse);
+  rpc GetAddress(GetAddressRequest) returns (GetAddressResponse);
+  rpc GenerateAddress(GenerateAddressRequest) returns (GenerateAddressResponse);
+}
+
+message VersionRequest {
+}
+
+message VersionResponse {
+  string version = 1;
+}
+
+message Blockchain {
+  string id = 1;
+  string name = 2;
+  string symbol = 3;
+  // other fields adds here
+}
+
+message ListBlockchainsRequest {
+}
+
+message ListBlockchainsResponse {
+  repeated Blockchain blockchains = 1;
+}
+
+message BlockchainAsset {
+  string id = 1;
+  string name = 2;
+  string symbol = 3;
+  // other fields adds here
+}
+
+message ListBlockchainAssetsRequest {
+  string name = 1;
+}
+
+message ListBlockchainAssetsResponse {
+  repeated BlockchainAsset assets = 1;
+}
+
+message GetAddressRequest {
+  string user_id = 1;
+  string chain_id = 2;
+  string asset_id = 3;
+}
+
+message GetAddressResponse {
+  bool has_address = 1;
+  string address = 2;
+}
+
+message GenerateAddressRequest {
+  string user_id = 1;
+  string chain_id = 2;
+  string asset_id = 3;
+}
+
+message GenerateAddressResponse {
+  string address = 2;
+}

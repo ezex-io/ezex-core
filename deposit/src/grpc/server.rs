@@ -1,10 +1,9 @@
 use crate::{
-    database::provider::DatabaseReader,
-    grpc::{
+    database::provider::DatabaseProvider, deposit::DepositHandler, grpc::{
         config::Config,
         deposit::deposit_service_server::DepositServiceServer,
         service::DepositServiceImpl,
-    },
+    }, kms::provider::KmsProvider
 };
 use log::{
     error,
@@ -12,16 +11,13 @@ use log::{
 };
 use tonic::transport::Server;
 
-pub async fn start_server<D>(
+pub async fn start_server(
     config: &Config,
-    db: D,
-) -> anyhow::Result<(), Box<dyn std::error::Error>>
-where
-    D: DatabaseReader + Sync + Send + 'static,
-{
+    deposit: DepositHandler,
+) -> anyhow::Result<()> {
     // defining address for our service
-    let service = DepositServiceImpl::new(db);
-    let address = config.address.parse().unwrap();
+    let service = DepositServiceImpl::new(deposit);
+    let address = config.address.parse()?;
     info!("Deposit Server listening on {}", address);
 
     if let Err(e) = Server::builder()

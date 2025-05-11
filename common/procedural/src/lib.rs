@@ -12,19 +12,19 @@ use syn::{
     parse_macro_input,
 };
 
-#[proc_macro_derive(Topic, attributes(topic_name))]
-pub fn derive_topic(input: TokenStream) -> TokenStream {
+#[proc_macro_derive(Event, attributes(event_key))]
+pub fn derive_event(input: TokenStream) -> TokenStream {
     let ast: syn::DeriveInput = syn::parse(input).unwrap();
     let ident = &ast.ident;
-    match topic_name(ast.clone()) {
-        Ok(topic_name) => {
+    match event_key(ast.clone()) {
+        Ok(event_key) => {
             let gen_code = quote! {
 
                 impl #ident {
-                    pub const name: &'static str = #topic_name;
+                    pub const name: &'static str = #event_key;
                 }
-                impl TopicMessage for #ident {
-                    fn topic(&self) -> &'static str { #topic_name }
+                impl EventMessage for #ident {
+                    fn key(&self) -> String { #event_key.to_string() }
                     fn as_any(&self) -> &dyn std::any::Any { self }
                 }
             };
@@ -39,13 +39,13 @@ pub fn derive_topic(input: TokenStream) -> TokenStream {
     }
 }
 
-pub(crate) fn topic_name(input: DeriveInput) -> Result<Lit, String> {
+pub(crate) fn event_key(input: DeriveInput) -> Result<Lit, String> {
     let attrs = input.attrs;
     match attrs.first() {
         Some(attr) => match attr.parse_meta() {
             Ok(meta) => {
                 let name = meta.path().get_ident();
-                if name.expect("please add topic name") == "topic_name" {
+                if name.expect("please add event name") == "event_key" {
                     match meta {
                         Meta::List(list) => match list.nested.first().unwrap() {
                             NestedMeta::Lit(l) => Ok(l.clone()),
@@ -54,12 +54,12 @@ pub(crate) fn topic_name(input: DeriveInput) -> Result<Lit, String> {
                         _ => Err("Not a meta list".to_owned()),
                     }
                 } else {
-                    Err("invalid name, should be topic_name".to_owned())
+                    Err("invalid name, should be event_key".to_owned())
                 }
             }
             Err(_) => Err("Unable to parse meta".to_owned()),
         },
-        None => Err("Need topic_name".to_owned()),
+        None => Err("Need event_key".to_owned()),
     }
 }
 

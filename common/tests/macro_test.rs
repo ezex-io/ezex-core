@@ -1,5 +1,5 @@
-use common::topic::TopicMessage;
-use procedural::Topic;
+use common::event::EventMessage;
+use procedural::Event;
 use serde::{
     Deserialize,
     Serialize,
@@ -7,12 +7,12 @@ use serde::{
 
 #[test]
 fn test_stream_name() {
-    #[derive(Debug, Serialize, Deserialize, Topic)]
-    #[topic_name("foo:bar")]
+    #[derive(Debug, Serialize, Deserialize, Event)]
+    #[event_key("foo:bar")]
     pub struct Foo {}
 
     let f = Foo {};
 
-    assert_eq!(f.topic(), "foo:bar");
+    assert_eq!(f.key(), "foo:bar");
     assert_eq!(Foo::name, "foo:bar");
 }

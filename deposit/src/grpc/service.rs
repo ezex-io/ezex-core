@@ -1,65 +1,73 @@
 use crate::{
-    database::provider::DatabaseReader,
-    grpc::deposit::{
-        deposit_service_server::DepositService,
-        *,
-    },
+    deposit::DepositHandler,
+    grpc::deposit::{deposit_service_server::DepositService, *},
 };
-use tonic::{
-    Code,
-    Request,
-    Response,
-    Status,
-};
+use tonic::{Request, Response, Status};
 
-pub struct DepositServiceImpl<D>
-where
-    D: DatabaseReader + Sync + Send + 'static,
-{
-    database: D,
+pub struct DepositServiceImpl {
+    deposit: DepositHandler,
 }
 
-impl<D> DepositServiceImpl<D>
-where
-    D: DatabaseReader + Sync + Send + 'static,
-{
-    pub fn new(database: D) -> Self {
-        Self { database }
+impl DepositServiceImpl {
+    pub fn new(deposit: DepositHandler) -> Self {
+        Self { deposit }
     }
 }
 
 #[tonic::async_trait]
-impl<D> DepositService for DepositServiceImpl<D>
-where
-    D: DatabaseReader + Sync + Send + 'static,
-{
+impl DepositService for DepositServiceImpl {
+    async fn list_blockchains(
+        &self,
+        _request: Request<ListBlockchainsRequest>,
+    ) -> anyhow::Result<Response<ListBlockchainsResponse>, Status> {
+        todo!()
+    }
+
+    async fn list_blockchain_assets(
+        &self,
+        _request: Request<ListBlockchainAssetsRequest>,
+    ) -> anyhow::Result<Response<ListBlockchainAssetsResponse>, Status> {
+        todo!()
+    }
+
+    async fn generate_address(
+        &self,
+        _request: Request<GenerateAddressRequest>,
+    ) -> anyhow::Result<Response<GenerateAddressResponse>, Status> {
+        todo!()
+    }
+
     async fn get_address(
         &self,
         request: Request<GetAddressRequest>,
     ) -> anyhow::Result<Response<GetAddressResponse>, Status> {
-        let user_id = request.get_ref().user_id.to_owned();
-        if user_id.is_empty() && request.get_ref().coin.to_owned().is_empty() {
-            return Err(Status::new(
-                Code::InvalidArgument,
-                "user_id or coin identifier is not valid",
-            ));
-        }
+        // let user_id = request.get_ref().user_id.to_owned();
+        // let chain_id = request.get_ref().chain_id.to_owned();
+        // let asset_id = request.get_ref().asset_id.to_owned();
+        // if user_id.is_empty() && request.get_ref().asset_id.to_owned().is_empty() {
+        //     return Err(Status::new(
+        //         Code::InvalidArgument,
+        //         "user_id or coin identifier is not valid",
+        //     ));
+        // }
 
-        let chain_id = match common::utils::coin_to_chain_id(&request.into_inner().coin) {
-            Some(chain) => chain,
-            None => return Err(Status::new(Code::NotFound, "coin not defined")),
-        };
-        let address = self
-            .database
-            .get_address(&user_id, &chain_id)
-            .map_err(common::utils::error_to_tonic_status)?;
+        // match self
+        //     .deposit
+        //     .get_address(&user_id, &chain_id, &asset_id)
+        //     .await
+        //     .map_err(|e| Status::internal(format!("Failed to get address: {}", e)))?
+        // {
+        //     Some(addr) => Ok(Response::new(GetAddressResponse {
+        //         has_address: true,
+        //         address: addr.address,
+        //     })),
+        //     None => Ok(Response::new(GetAddressResponse {
+        //         has_address: false,
+        //         address: "".to_string(),
+        //     })),
+        // }
 
-        match address {
-            Some(addr) => Ok(Response::new(GetAddressResponse {
-                deposit_address: addr.address,
-            })),
-            None => Err(Status::new(Code::NotFound, "No deposit address")),
-        }
+        todo!()
     }
 
     async fn version(

@@ -35,10 +35,7 @@ use anyhow::{
 use bigdecimal::BigDecimal;
 use database::{
     models::NewMarket,
-    persistence::{
-        self,
-        ThreadSafePersistence,
-    },
+    persistence::ThreadSafePersistence,
 };
 use tokio::sync::RwLock;
 use tonic::{

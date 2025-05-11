@@ -1,35 +1,62 @@
-use crate::database::{
-    postgres::postgres::PostgresDB,
-    provider::{
-        DatabaseReader,
-        DatabaseWriter,
+use crate::{
+    database::{
+        postgres::{config::Config, postgres::PostgresDB, schema::address_book::user_id},
+        provider::{DatabaseReader, DatabaseWriter},
     },
+    types::AddressScope,
 };
-use common::{
-    consts::*,
-    testsuite::postgres::PostgresTestDB,
-};
+
+fn make_test_db() -> PostgresDB {
+    let pg_db = PostgresTestDB::new();
+    PostgresDB::new(&Config {
+        database_url: pg_db.con_string(),
+        pool_size: 1,
+    })
+    .unwrap()
+}
 
 #[test]
-fn test_save_address() {
-    let pq_db = PostgresTestDB::new();
+fn test_address_operations() {
+    let db = make_test_db();
 
-    let pq = PostgresDB::new(&pq_db.con_string(), 1).unwrap();
+    let test_cases = [
+        (
+            AddressScope {
+                wallet_id: Some("wallet_1".into()),
+                user_id: "alice".into(),
+                chain_id: "pactus".into(),
+                asset_id: "PAC".into(),
+            },
+            "pac_addr_1",
+        ),
+        (
+            AddressScope {
+                wallet_id: Some("wallet_1".into()),
+                user_id: "bob".into(),
+                chain_id: "pactus".into(),
+                asset_id: "PAC".into(),
+            },
+            "pac_addr_2",
+        ),
+        (
+            AddressScope {
+                wallet_id: Some("wallet_1".into()),
+                user_id: "bob".into(),
+                chain_id: "bitcoin".into(),
+                asset_id: "PAC".into(),
+            },
+            "btc_addr_1",
+        ),
+    ];
 
-    let user_id_1 = "alice".to_string();
-    let user_id_2 = "bob".to_string();
+    // Test address assignment
+    for (scope, addr) in &test_cases {
+        db.assign_address(scope, addr).unwrap();
+    }
 
-    pq.assign_address(&user_id_1, "PAC", "wallet_1", "pac_addr_1")
-        .unwrap();
-    pq.assign_address(&user_id_2, "PAC", "wallet_2", "pac_addr_2")
-        .unwrap();
-    pq.assign_address(&user_id_2, "BTC", "wallet_2", "btc_addr_1")
-        .unwrap();
-
-    let result_1 = pq.get_address(&user_id_1, "PAC").unwrap();
-    assert_eq!(result_1.unwrap().address, "pac_addr_1");
-    let result_2 = pq.get_address(&user_id_1, "PAC").unwrap();
-    assert_eq!(result_2, None);
-    let result_3 = pq.get_address(&user_id_2, "BTC").unwrap();
-    assert_eq!(result_3.unwrap().address, "btc_addr_1");
+    // Verify addresses
+    for (scope, expected_addr) in test_cases {
+        let retrieved = db.get_address(&scope).unwrap().unwrap();
+        assert_eq!(retrieved.address, expected_addr);
+    }
 }

@@ -3,10 +3,18 @@ mod topics;
 
 use assert_cmd::prelude::*;
 
-use common::testsuite::{self, postgres::PostgresTestDB, redis::RedisTestClient};
+use common::testsuite::{
+    self,
+    postgres::PostgresTestDB,
+    redis::RedisTestClient,
+};
 use ezex_deposit::grpc::deposit::deposit_service_client::DepositServiceClient;
 use std::{
-    process::{Child, Command, Stdio},
+    process::{
+        Child,
+        Command,
+        Stdio,
+    },
     time::Duration,
 };
 use tokio::time::sleep;
@@ -30,7 +38,7 @@ impl TestContext {
 
         let redis_group = "deposit-group-1";
         let redis = RedisTestClient::new(redis_group);
-        let redis_con_string = RedisTestClient::redis_connection_string();
+        let redis_con_string = redis.connection_string();
 
         let mut cmd = Command::cargo_bin("ezex-deposit").unwrap();
         let child = cmd

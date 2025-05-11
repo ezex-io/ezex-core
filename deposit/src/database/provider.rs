@@ -1,7 +1,4 @@
-use crate::types::{
-    Address,
-    Wallet,
-};
+use crate::types::{Address, Wallet};
 
 /// Provides read access to the database.
 pub trait DatabaseReader {
@@ -11,17 +8,22 @@ pub trait DatabaseReader {
     /// Returns an error if the wallet associated with the identifier cannot be retrieved.
     fn get_wallet(&self, chain_id: &str) -> anyhow::Result<Wallet>;
 
-    /// Returns the address details for a user, if one has been generated for the specified chain.
+    /// Returns the address details for a user, if one has been generated for the specified asset.
     ///
     /// # Errors
     /// Returns an error if the address associated with the user cannot be retrieved.
-    fn get_address(&self, user_id: &str, chain_id: &str) -> anyhow::Result<Option<Address>>;
+    fn get_address(
+        &self,
+        user_id: &str,
+        chain_id: &str,
+        asset_id: &str,
+    ) -> anyhow::Result<Option<Address>>;
 
-    /// Checks whether the specified address exists for the given chain.
+    /// Checks whether the specified address exists for the given asset.
     ///
     /// # Errors
     /// Returns an error if the check fails.
-    fn has_address(&self, address: &str, chain_id: &str) -> anyhow::Result<bool>;
+    fn has_address(&self, address: &str, chain_id: &str, asset_id: &str) -> anyhow::Result<bool>;
 }
 
 /// Provides write access to the database.
@@ -34,13 +36,14 @@ pub trait DatabaseWriter {
     fn assign_address(
         &self,
         user_id: &str,
-        chain_id: &str,
         wallet_id: &str,
-        wallet_address: &str,
+        chain_id: &str,
+        asset_id: &str,
+        address: &str,
     ) -> anyhow::Result<()>;
 }
 
 /// Combines both read and write capabilities for database access.
-pub trait DatabaseProvider: DatabaseReader + DatabaseWriter {}
+pub trait DatabaseProvider: DatabaseReader + DatabaseWriter + Sync + Send + 'static {}
 
-impl<T: DatabaseReader + DatabaseWriter> DatabaseProvider for T {}
+impl<T: DatabaseReader + DatabaseWriter + Sync + Send + 'static> DatabaseProvider for T {}

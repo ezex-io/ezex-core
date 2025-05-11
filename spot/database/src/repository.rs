@@ -279,7 +279,7 @@ impl Repository {
             .first::<MarketStat>(conn)
             .optional()?;
 
-        if let Some(_) = stats_option {
+        if stats_option.is_some() {
             // Update existing stats
             let result = diesel::update(market_stats::table.find(market_id))
                 .set((

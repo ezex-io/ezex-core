@@ -21,6 +21,12 @@ pub struct MarketManager {
     markets: Arc<RwLock<HashMap<String, Market>>>,
 }
 
+impl Default for MarketManager {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl MarketManager {
     pub fn new() -> Self {
         MarketManager {

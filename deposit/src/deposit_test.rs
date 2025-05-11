@@ -1,6 +1,6 @@
 use crate::{
     config::Config,
-    deposit::Deposit,
+    deposit::DepositHandler,
     kms::{
         mock::MockKmsProvider,
         provider::KmsProvider,
@@ -9,7 +9,6 @@ use crate::{
 use common::{
     consts::*,
     testsuite::postgres::PostgresTestDB,
-    topic::deposit,
 };
 use mockall::predicate::*;
 use serde_json::json;
@@ -20,7 +19,7 @@ async fn test_generate_address_with_invalid_wallet_id() {
 
     let db = crate::database::postgres::postgres::PostgresDB::new(&pq_db.con_string(), 1).unwrap();
     let kms = MockKmsProvider::new();
-    let deposit = Deposit::new(db, kms);
+    let deposit = DepositHandler::new(db, kms);
 
     let user_id = "Alice".to_string();
     let request = deposit::address::Generate {
@@ -29,7 +28,7 @@ async fn test_generate_address_with_invalid_wallet_id() {
         wallet_id: "valid-wallet-id".to_string(),
     };
 
-    let res = deposit.process_address_generate(request).await;
+    let res = deposit.generate_address(request).await;
     assert!(res.is_err());
 }
 
@@ -39,7 +38,7 @@ async fn test_generate_address_eth() {
 
     let db = crate::database::postgres::postgres::PostgresDB::new(&pq_db.con_string(), 1).unwrap();
     let kms = MockKmsProvider::new();
-    let deposit = Deposit::new(db, kms);
+    let deposit = DepositHandler::new(db, kms);
 
     let user_id = "Alice".to_string();
     let request = deposit::address::Generate {
@@ -48,11 +47,7 @@ async fn test_generate_address_eth() {
         wallet_id: "wallet_1".to_string(),
     };
 
-    let res = deposit
-        .process_address_generate(request)
-        .await
-        .unwrap()
-        .remove(0);
+    let res = deposit.generate_address(request).await.unwrap().remove(0);
     let event = res
         .as_any()
         .downcast_ref::<deposit::address::Generated>()
@@ -66,7 +61,7 @@ async fn test_generate_address_btc() {
 
     let db = crate::database::postgres::postgres::PostgresDB::new(&pq_db.con_string(), 1).unwrap();
     let kms = MockKmsProvider::new();
-    let deposit = Deposit::new(db, kms);
+    let deposit = DepositHandler::new(db, kms);
 
     let request = deposit::address::Generate {
         user_id: "alice".to_owned(),
@@ -74,11 +69,7 @@ async fn test_generate_address_btc() {
         wallet_id: "wallet_1".to_owned(),
     };
 
-    let res = deposit
-        .process_address_generate(request)
-        .await
-        .unwrap()
-        .remove(0);
+    let res = deposit.generate_address(request).await.unwrap().remove(0);
     let event = res
         .as_any()
         .downcast_ref::<deposit::address::Generated>()
@@ -92,7 +83,7 @@ async fn test_process_duplicate_address_generate() {
 
     let db = crate::database::postgres::postgres::PostgresDB::new(&pq_db.con_string(), 1).unwrap();
     let kms = MockKmsProvider::new();
-    let deposit = Deposit::new(db, kms);
+    let deposit = DepositHandler::new(db, kms);
 
     let request = deposit::address::Generate {
         user_id: "alice".to_owned(),
@@ -101,11 +92,11 @@ async fn test_process_duplicate_address_generate() {
     };
 
     let res_1 = deposit
-        .process_address_generate(request.clone())
+        .generate_address(request.clone())
         .await
         .unwrap()
         .remove(0);
-    let res_2 = deposit.process_address_generate(request).await;
+    let res_2 = deposit.generate_address(request).await;
 
     let event_1 = res_1
         .as_any()
@@ -125,7 +116,7 @@ async fn test_check_coin_exists() {
 
     let db = crate::database::postgres::postgres::PostgresDB::new(&pq_db.con_string(), 1).unwrap();
     let kms = MockKmsProvider::new();
-    let deposit = Deposit::new(db, kms);
+    let deposit = DepositHandler::new(db, kms);
 
     let request = deposit::address::Generate {
         user_id: "alice".to_owned(),
@@ -133,7 +124,7 @@ async fn test_check_coin_exists() {
         wallet_id: "60def63ab9390d000630211559c1544d".to_owned(),
     };
 
-    let res = deposit.process_address_generate(request).await;
+    let res = deposit.generate_address(request).await;
     assert!(res.is_err())
 }
 
@@ -143,7 +134,7 @@ async fn test_check_duplicate_address() {
 
     let db = crate::database::postgres::postgres::PostgresDB::new(&pq_db.con_string(), 1).unwrap();
     let kms = MockKmsProvider::new();
-    let deposit = Deposit::new(db, kms);
+    let deposit = DepositHandler::new(db, kms);
 
     let request = deposit::address::Generate {
         user_id: "alice".to_owned(),
@@ -157,7 +148,7 @@ async fn test_check_duplicate_address() {
         wallet_id: "60def63ab9390d000630211559c1544d".to_owned(),
     };
 
-    let _res = deposit.process_address_generate(request).await;
-    let res_1 = deposit.process_address_generate(request_1).await;
+    let _res = deposit.generate_address(request).await;
+    let res_1 = deposit.generate_address(request_1).await;
     assert!(res_1.is_err())
 }

@@ -1,5 +1,11 @@
-use redis::{ErrorKind, RedisError, ToRedisArgs, Value};
-use serde::{Deserialize, Serialize};
+use redis::{
+    RedisError,
+    Value,
+};
+use serde::{
+    Deserialize,
+    Serialize,
+};
 use serde_redis::decode;
 use std::collections::HashMap;
 
