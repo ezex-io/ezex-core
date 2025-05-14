@@ -1,10 +1,14 @@
 use crate::{
-    database::provider::DatabaseProvider, deposit::DepositHandler, kms::provider::KmsProvider,
+    database::provider::DatabaseProvider,
+    deposit::DepositHandler,
+    kms::provider::KmsProvider,
 };
 use common::{event::*, redis::redis_bus::EventBus};
-use log::kv::Value;
 use redis_stream_bus::{
-    bus::StreamBus, client::RedisClient, config::Config as RedisConfig, entry::Entry,
+    bus::StreamBus,
+    client::RedisClient,
+    config::Config as RedisConfig,
+    entry::Entry,
 };
 use tonic::async_trait;
 
@@ -27,7 +31,7 @@ impl RedisBus {
 
 #[async_trait]
 impl PublisherProvider for RedisBus {
-    async fn publish(&self, event: Box<dyn EventMessage>) -> anyhow::Result<()> {
+    async fn publish(&mut self, event: Box<dyn EventMessage>) -> anyhow::Result<()> {
         let mut str = vec![];
         let mut serializer = serde_json::Serializer::new(&mut str);
         event
@@ -40,9 +44,7 @@ impl PublisherProvider for RedisBus {
             fields: redis::Value::Nil, // TODO??
         };
 
-        self.client
-            .xadd(entry)
-            .await.unwrap();
+        self.client.xadd(entry).await.unwrap();
 
         Ok(())
     }

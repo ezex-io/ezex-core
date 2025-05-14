@@ -1,11 +1,5 @@
-use redis::{
-    RedisError,
-    Value,
-};
-use serde::{
-    Deserialize,
-    Serialize,
-};
+use redis::{RedisError, Value};
+use serde::{Deserialize, Serialize};
 use serde_redis::decode;
 use std::collections::HashMap;
 
@@ -48,6 +42,7 @@ pub fn decode(fields: &HashMap<String, Value>) -> Result<StreamFields, decode::E
     }
 
     let bulk = Value::Array(vec);
-    let de = decode::Deserializer::new(bulk);
+    // Convert to Cow<'static, Value> to match the AsValueVec<'static> implementation
+    let de = decode::Deserializer::new(std::borrow::Cow::Owned(bulk));
     Deserialize::deserialize(de)
 }

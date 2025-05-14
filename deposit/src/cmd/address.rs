@@ -1,7 +1,9 @@
 use anyhow::{Context, Result};
 use clap::{Args, Subcommand};
 use ezex_deposit::{
-    database, deposit, event_bus,
+    database,
+    deposit,
+    event_bus,
     kms::{self, kms::DepositKms},
 };
 
@@ -49,7 +51,7 @@ impl AddressCmd {
                 };
                 let publisher = event_bus::redis::RedisBus::new(&redis_config).unwrap();
 
-                let deposit = deposit::DepositHandler::new(
+                let mut deposit = deposit::DepositHandler::new(
                     Box::new(database),
                     Box::new(kms),
                     Box::new(publisher),
@@ -57,7 +59,7 @@ impl AddressCmd {
 
                 // Generate address with proper error handling
                 let address = deposit
-                    .generate_address(&wallet_id, &chain_id, &asset_id)
+                    .generate_address(wallet_id, chain_id, asset_id)
                     .await
                     .context(format!(
                         "Failed to generate address {} {} {}",

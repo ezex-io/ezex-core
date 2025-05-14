@@ -1,8 +1,8 @@
 use crate::{
     config::Config,
     database::provider::DatabaseProvider,
+    event_bus::{events, provider::PublisherProvider},
     kms::provider::KmsProvider,
-    event_bus::{self, events, provider::PublisherProvider},
     types::Address,
 };
 use common::event::*;
@@ -15,7 +15,11 @@ pub struct DepositHandler {
 }
 
 impl DepositHandler {
-    pub fn new(database: Box<dyn DatabaseProvider>, kms: Box<dyn KmsProvider>, publisher: Box<dyn PublisherProvider>) -> Self {
+    pub fn new(
+        database: Box<dyn DatabaseProvider>,
+        kms: Box<dyn KmsProvider>,
+        publisher: Box<dyn PublisherProvider>,
+    ) -> Self {
         DepositHandler {
             database,
             kms,
@@ -29,29 +33,29 @@ impl DepositHandler {
         chain_id: &str,
         asset_id: &str,
     ) -> anyhow::Result<Option<Address>> {
-        Ok(self.database.get_address(&user_id, &chain_id, &asset_id)?)
+        self.database.get_address(user_id, chain_id, asset_id)
     }
 
     pub async fn generate_address(
-        &self,
+        &mut self,
         user_id: &str,
         chain_id: &str,
         asset_id: &str,
     ) -> anyhow::Result<String> {
-        match self.database.get_address(&user_id, &chain_id, &asset_id)? {
+        match self.database.get_address(user_id, chain_id, asset_id)? {
             Some(address) => {
                 anyhow::bail!("Duplicated address: {}", address.address)
             }
             None => {
-                let wallet_id = self.database.get_wallet(&chain_id)?.chain_id;
+                let wallet_id = self.database.get_wallet(chain_id)?.chain_id;
                 let address = self
                     .kms
-                    .generate_address(&wallet_id, &chain_id, &asset_id)
+                    .generate_address(&wallet_id, chain_id, asset_id)
                     .await?;
 
                 // Store the address in db
                 self.database
-                    .assign_address(&user_id, &wallet_id, &chain_id, &asset_id, &address)?;
+                    .assign_address(user_id, &wallet_id, chain_id, asset_id, &address)?;
 
                 // Publish the event
                 let event = Box::new(events::address::Generated {
@@ -61,7 +65,7 @@ impl DepositHandler {
                     asset_id: asset_id.to_string(),
                     address: address.clone(),
                 });
-                self.publisher.publish(event);
+                self.publisher.publish(event).await?;
 
                 info!(
                     "A new address generated. {} {} {}, address: {}",

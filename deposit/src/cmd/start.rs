@@ -1,36 +1,18 @@
 use anyhow::Result;
-use clap::{
-    Parser,
-    command,
-};
-use common::{
-    logger,
-    logger::config::Config as LoggerConfig,
-};
+use clap::{Parser, command};
+use common::{logger, logger::config::Config as LoggerConfig};
 use ezex_deposit::{
-    database::postgres::{
-        config::Config as PostgresConfig,
-        postgres::PostgresDB,
-    },
+    database::postgres::{config::Config as PostgresConfig, postgres::PostgresDB},
     deposit::DepositHandler,
     event_bus::redis::RedisBus,
-    grpc::{
-        config::Config as GRPCConfig,
-        server,
-    },
-    kms::{
-        config::Config as KmsConfig,
-        kms::DepositKms,
-    },
+    grpc::{config::Config as GRPCConfig, server},
+    kms::{config::Config as KmsConfig, kms::DepositKms},
 };
 use redis_stream_bus::config::Config as RedisConfig;
 use std::{
     sync::{
         Arc,
-        atomic::{
-            AtomicBool,
-            Ordering,
-        },
+        atomic::{AtomicBool, Ordering},
     },
     thread,
 };
@@ -79,7 +61,6 @@ impl StartArgs {
         let grpc_handle = task::spawn(async move {
             server::start_server(&grpc_config, deposit).await.unwrap();
         });
-
 
         log::info!("Deposit started...");
         while running.load(Ordering::SeqCst) {
