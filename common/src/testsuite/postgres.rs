@@ -1,28 +1,10 @@
-use crate::topic::TopicMessage;
 // use async_std::task::sleep;
 use diesel::{
     Connection,
     PgConnection,
     RunQueryDsl,
 };
-use redis::{
-    Commands,
-    streams::{
-        StreamPendingReply,
-        StreamReadReply,
-    },
-};
-use redis_stream_bus::client::Stream;
-use serde::de::DeserializeOwned;
-use serde_json::Value;
-use std::{
-    collections::{
-        BTreeMap,
-        HashMap,
-    },
-    env,
-    time::Duration,
-};
+use std::env;
 
 pub struct PostgresTestDB {
     pub conn: PgConnection,
@@ -31,13 +13,13 @@ pub struct PostgresTestDB {
 }
 
 impl PostgresTestDB {
-    fn postgres_database_url() -> String {
-        env::var("POSTGRES_DATABASE_URL")
+    fn test_database_url() -> String {
+        env::var("TEST_POSTGRES_DATABASE_URL")
             .unwrap_or_else(|_e| String::from("postgres://postgres:postgres@localhost:5432"))
     }
 
     pub fn new() -> Self {
-        let database_url = Self::postgres_database_url();
+        let database_url = Self::test_database_url();
 
         let mut conn =
             PgConnection::establish(&database_url).expect("Cannot connect to postgres database.");

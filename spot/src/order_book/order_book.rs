@@ -1,9 +1,6 @@
 use crate::{
     models::{
-        matched_trade::{
-            MarketRole,
-            MatchedTrade,
-        },
+        matched_trade::MatchedTrade,
         trade_order::{
             OrderSide,
             OrderType,
@@ -74,7 +71,7 @@ impl OrderBookTrait for OrderBook {
             orders: HashMap::new(),
 
             //TODO: Get the market price from the database OR from the market
-            market_price: BigDecimal::try_from(10000).unwrap(),
+            market_price: BigDecimal::from(10000),
         }
     }
 
@@ -227,7 +224,7 @@ impl OrderBook {
             timestamp,
             market_id: taker.market_id.clone(),
             price: self.market_price.clone(),
-            amount: amount,
+            amount,
             quote_amount,
             maker_user_id: maker.user_id.clone(),
             maker_order_id: maker.id.clone(),
@@ -453,7 +450,7 @@ mod tests {
 
         // Cancel the bid
         let canceled = order_book.cancel_order("1".to_string());
-        assert_eq!(canceled, true);
+        assert!(canceled);
 
         // Verify the bid is removed from the order book
         assert!(order_book.bids.is_empty());

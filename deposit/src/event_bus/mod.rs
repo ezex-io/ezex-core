@@ -1,6 +1,6 @@
-pub mod config;
-pub mod kms;
+pub mod events;
 pub mod provider;
+pub mod redis;
 
 #[cfg(test)]
 pub mod mock;

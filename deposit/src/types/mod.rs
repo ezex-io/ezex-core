@@ -1,7 +1,7 @@
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub enum WalletStatus {
-    Disabled,
-    Enabled,
+    Disabled = 0,
+    Enabled = 1,
 }
 
 #[derive(Debug, Clone, Eq, PartialEq)]
@@ -9,7 +9,6 @@ pub struct Wallet {
     pub status: WalletStatus,
     pub wallet_id: String,
     pub chain_id: String,
-    pub wallet_type: String, // TODO: Maybe enum here?
     pub description: String,
     pub created_at: chrono::NaiveDateTime,
 }
@@ -18,7 +17,6 @@ pub struct Wallet {
 pub struct Address {
     pub user_id: String,
     pub chain_id: String,
-    // Wallet ID is used to generate the address
     pub wallet_id: String,
     pub address: String,
     pub created_at: chrono::NaiveDateTime,
