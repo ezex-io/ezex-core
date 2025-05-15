@@ -34,17 +34,6 @@ pub mod transaction {
     use procedural::Event;
     use serde::{Deserialize, Serialize};
 
-    #[derive(Clone, Serialize, Deserialize, Debug, Event, Eq, PartialEq)]
-    #[event_key("deposit:transaction:unconfirmed")]
-    pub struct Unconfirmed {
-        pub deposit_id: String,
-        pub onchain_tx_id: String,
-        pub user_id: String,
-        pub chain_id: String,
-        pub asset_id: String,
-        pub amount: String,
-    }
-
     #[derive(Serialize, Deserialize, Debug, Clone, Event)]
     #[event_key("deposit:transaction:confirmed")]
     pub struct Confirmed {
