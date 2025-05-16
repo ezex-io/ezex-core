@@ -3,4 +3,6 @@ use procedural::EnvPrefix;
 
 #[derive(Debug, Clone, Args, EnvPrefix)]
 #[group(id = "kms")]
-pub struct Config {}
+pub struct Config {
+    // TODO: gRPC address of ezex_kms
+}

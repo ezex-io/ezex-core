@@ -5,6 +5,7 @@ pub trait EventMessage: Debug + Send + Sync + Serialize {
     fn key(&self) -> String;
     fn as_any(&self) -> &dyn Any;
 }
+erased_serde::serialize_trait_object!(EventMessage);
 
 #[cfg(test)]
 mod test {
@@ -65,25 +66,22 @@ mod test {
         assert_eq!(evt1, evt2);
     }
 
-    // #[test]
-    // fn test_event_boxed_serde_redis() {
-    //     let evt1 = TestEvent {
-    //         msg: "hello_world".to_string(),
-    //     };
+    #[test]
+    fn test_event_boxed_serde_redis() {
+        let evt1 = TestEvent {
+            msg: "hello_world".to_string(),
+        };
 
-    //     let boxed_event: Box<dyn EventMessage> = Box::new(evt1.clone());
-    //     let serializer = serde_redis::Serializer;
+        let boxed_event: Box<dyn EventMessage> = Box::new(evt1.clone());
+        let serializer = serde_redis::Serializer;
 
-    //     let mut formatter = <dyn erased_serde::Serializer>::erase(serializer);
-    //     let ok = boxed_event.erased_serialize(&mut formatter).unwrap();
+        let value = boxed_event.serialize(serializer).unwrap();
 
-    //     // let value = ok.into();
+        let deserializer = serde_redis::Deserializer::new(value);
+        let evt2: TestEvent =
+            erased_serde::deserialize(&mut <dyn erased_serde::Deserializer>::erase(deserializer))
+                .unwrap();
 
-    //     let mut deserializer = serde_redis::Deserializer::new(value);
-    //     let evt2: TestEvent =
-    //         erased_serde::deserialize(&mut <dyn erased_serde::Deserializer>::erase(deserializer))
-    //             .unwrap();
-
-    //     assert_eq!(evt1, evt2);
-    // }
+        assert_eq!(evt1, evt2);
+    }
 }

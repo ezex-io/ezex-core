@@ -10,7 +10,7 @@ pub fn derive_event(input: TokenStream) -> TokenStream {
         Ok(event_key) => {
             let gen_code = quote! {
                 impl #ident {
-                    pub const name: &'static str = #event_key;
+                    pub const event_key: &'static str = #event_key;
                 }
                 impl EventMessage for #ident {
                     fn key(&self) -> String { #event_key.to_string() }
