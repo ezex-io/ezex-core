@@ -81,7 +81,8 @@ impl DepositHandler {
             .map_err(|e| Status::internal(e.to_string()))?
         {
             true => Err(Status::invalid_argument(format!(
-                "Duplicated address: {} {} {}",
+                "duplicated address: {}/{}/{}/{}",
+                wallet.wallet_id,
                 req.get_ref().user_id,
                 req.get_ref().chain_id,
                 req.get_ref().asset_id,
@@ -115,7 +116,7 @@ impl DepositHandler {
                     .await
                     .map_err(|e| Status::internal(e.to_string()))?;
 
-                info!("address generated. {address}");
+                info!("address generated {address}");
 
                 Ok(Response::new(GenerateAddressResponse {
                     address: address.address,

@@ -22,3 +22,13 @@ pub struct Address {
     pub address: String,
     pub created_at: chrono::NaiveDateTime,
 }
+
+impl std::fmt::Display for Address {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{}/{}/{}/{}/{}",
+            self.wallet_id, self.user_id, self.chain_id, self.asset_id, self.address
+        )
+    }
+}
