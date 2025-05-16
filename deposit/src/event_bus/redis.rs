@@ -15,10 +15,8 @@ pub struct RedisBus {
 
 impl RedisBus {
     pub fn new(config: &RedisConfig) -> anyhow::Result<Self> {
-        // TODO: Why we can't use `?``
         let client = RedisClient::from_config(config).map_err(|e| anyhow::anyhow!(e))?;
 
-        // client.read_loop();
         Ok(Self { client })
     }
 }

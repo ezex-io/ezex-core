@@ -1,11 +1,10 @@
 use crate::{
     config::Config,
     deposit::DepositHandler,
-    kms::{mock::MockKmsProvider, provider::KmsProvider},
+    kms::{kms::MockKmsProvider, provider::KmsProvider},
 };
 use common::{consts::*, testsuite::postgres::PostgresTestDB};
 use mockall::predicate::*;
-use serde_json::json;
 
 #[tokio::test]
 async fn test_generate_address_with_invalid_wallet_id() {

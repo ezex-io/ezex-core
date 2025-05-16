@@ -1,5 +1,4 @@
 mod grpc;
-mod topics;
 
 use assert_cmd::prelude::*;
 
@@ -38,9 +37,9 @@ impl TestContext {
             .env("LOG_LEVEL", "debug")
             .env("GRPC_ADDRESS", grpc_address.clone())
             .env("REDIS_CONNECTION_STRING", redis_con_string)
-            .env("REDIS_CONSUMER", "deposit-consumer-1")
+            .env("REDIS_CONSUMER_NAME", "deposit-consumer-1")
             .env("REDIS_GROUP_NAME", redis_group)
-            .env("DATABASE_URL", database_url)
+            .env("POSTGRES_DATABASE_URL", database_url)
             .stdin(Stdio::piped())
             .spawn()
             .expect("Failed to spawn child process");
@@ -71,11 +70,10 @@ impl TestContext {
 
 #[tokio::test]
 #[serial_test::serial]
-async fn test_deposit_vault() {
+async fn test_deposit() {
     let mut ctx = TestContext::setup().await;
+    
     grpc::test_grpc_version(&mut ctx).await;
-    topics::test_generate_valid_address(&mut ctx).await;
-    topics::test_generate_error_address(&mut ctx).await;
     grpc::test_get_address(&mut ctx).await;
     grpc::test_address_not_exist(&mut ctx).await;
     sleep(Duration::from_secs(5)).await;

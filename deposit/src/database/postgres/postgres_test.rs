@@ -1,59 +1,58 @@
-use crate::database::{
-    postgres::{config::Config, postgres::PostgresDB, schema::address_book::user_id},
-    provider::{DatabaseReader, DatabaseWriter},
+use common::testsuite::postgres::PostgresTestDB;
+
+use crate::{
+    database::{
+        postgres::{config::Config, postgres::PostgresDB, schema::address_book::user_id},
+        provider::{DatabaseReader, DatabaseWriter},
+    },
+    types::Address,
 };
 
-fn make_test_db() -> PostgresDB {
-    let pg_db = PostgresTestDB::new();
-    PostgresDB::new(&Config {
-        database_url: pg_db.con_string(),
-        pool_size: 1,
-    })
-    .unwrap()
-}
 
 #[test]
 fn test_address_operations() {
-    let db = make_test_db();
+    let test_db = PostgresTestDB::new();
+    let db = PostgresDB::new(&Config {
+        database_url: test_db.con_string(),
+        pool_size: 1,
+    })
+    .unwrap();
 
     let test_cases = [
-        (
-            AddressScope {
-                wallet_id: Some("wallet_1".into()),
-                user_id: "alice".into(),
-                chain_id: "pactus".into(),
-                asset_id: "PAC".into(),
-            },
-            "pac_addr_1",
-        ),
-        (
-            AddressScope {
-                wallet_id: Some("wallet_1".into()),
-                user_id: "bob".into(),
-                chain_id: "pactus".into(),
-                asset_id: "PAC".into(),
-            },
-            "pac_addr_2",
-        ),
-        (
-            AddressScope {
-                wallet_id: Some("wallet_1".into()),
-                user_id: "bob".into(),
-                chain_id: "bitcoin".into(),
-                asset_id: "PAC".into(),
-            },
-            "btc_addr_1",
-        ),
+        Address {
+            wallet_id: "wallet_1".into(),
+            user_id: "alice".into(),
+            chain_id: "pactus".into(),
+            asset_id: "PAC".into(),
+            address: "pac_addr_1".into(),
+            created_at: chrono::Utc::now().naive_local(),
+        },
+        Address {
+            wallet_id: "wallet_1".into(),
+            user_id: "bob".into(),
+            chain_id: "pactus".into(),
+            asset_id: "PAC".into(),
+            address: "pac_addr_2".into(),
+            created_at: chrono::Utc::now().naive_local(),
+        },
+        Address {
+            wallet_id: "wallet_1".into(),
+            user_id: "bob".into(),
+            chain_id: "bitcoin".into(),
+            asset_id: "PAC".into(),
+            address: "btc_addr_1".into(),
+            created_at: chrono::Utc::now().naive_local(),
+        },
     ];
 
     // Test address assignment
-    for (scope, addr) in &test_cases {
-        db.assign_address(scope, addr).unwrap();
+    for addr in &test_cases {
+        db.save_address(addr).unwrap();
     }
 
     // Verify addresses
-    for (scope, expected_addr) in test_cases {
-        let retrieved = db.get_address(&scope).unwrap().unwrap();
-        assert_eq!(retrieved.address, expected_addr);
+    for addr in test_cases {
+        let retrieved = db.get_address(&addr.wallet_id, &addr.user_id, &addr.chain_id, &addr.asset_id).unwrap().unwrap();
+        assert_eq!(retrieved.address, addr.address);
     }
 }
