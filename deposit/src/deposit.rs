@@ -37,7 +37,9 @@ impl DepositHandler {
         &self,
         req: Request<GetAddressRequest>,
     ) -> anyhow::Result<Response<GetAddressResponse>, Status> {
-        let wallet = self.get_wallet(&req.get_ref().chain_id)?;
+        let wallet = self
+            .get_wallet(&req.get_ref().chain_id)
+            .map_err(|err| Status::internal(err.to_string()))?;
 
         let address = match self
             .database
@@ -68,7 +70,9 @@ impl DepositHandler {
         &self,
         req: Request<GenerateAddressRequest>,
     ) -> anyhow::Result<Response<GenerateAddressResponse>, Status> {
-        let wallet = self.get_wallet(&req.get_ref().chain_id)?;
+        let wallet = self
+            .get_wallet(&req.get_ref().chain_id)
+            .map_err(|err| Status::internal(err.to_string()))?;
 
         match self
             .database
@@ -125,14 +129,10 @@ impl DepositHandler {
         }
     }
 
-    fn get_wallet(&self, chain_id: &str) -> anyhow::Result<Wallet, Status> {
-        match self
-            .database
-            .get_wallet(chain_id)
-            .map_err(|e| Status::internal(format!("unable to get wallet: {e}")))?
-        {
+    fn get_wallet(&self, chain_id: &str) -> anyhow::Result<Wallet> {
+        match self.database.get_wallet(chain_id)? {
             Some(wallet) => Ok(wallet),
-            None => Err(Status::not_found("unable to find wallet_id")),
+            None => Err(anyhow::anyhow!("unable to find wallet_id")),
         }
     }
 }
