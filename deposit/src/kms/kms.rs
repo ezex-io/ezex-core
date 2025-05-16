@@ -4,13 +4,10 @@ use log::debug;
 
 use super::config::Config;
 
-#[cfg(test)]
-use mockall::mock;
-
 pub struct DepositKms {}
 
 impl DepositKms {
-    pub fn new(config: &Config) -> anyhow::Result<Self> {
+    pub fn new(_config: &Config) -> anyhow::Result<Self> {
         Ok(DepositKms {})
     }
 }

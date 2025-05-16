@@ -1,147 +1,121 @@
 use crate::{
-    config::Config,
+    database::postgres::{config::Config as PostgresConfig, postgres::PostgresDB},
     deposit::DepositHandler,
-    kms::{kms::MockKmsProvider, provider::KmsProvider},
+    event_bus::{events::address::Generated, provider::MockPublisherProvider},
+    grpc::deposit::GenerateAddressRequest,
+    kms::provider::MockKmsProvider,
+    types::Address,
 };
-use common::{consts::*, testsuite::postgres::PostgresTestDB};
+use common::testsuite::postgres::PostgresTestDB;
 use mockall::predicate::*;
+use tonic::Request;
+
+struct TestData {
+    pub mocked_kms: MockKmsProvider,
+    pub mocked_publisher: MockPublisherProvider,
+    pub db: PostgresDB,
+}
+
+impl TestData {
+    pub fn setup(test_db: &PostgresTestDB) -> Self {
+        let db = PostgresDB::new(&PostgresConfig {
+            database_url: test_db.con_string(),
+            pool_size: 1,
+        })
+        .unwrap();
+        let mocked_kms = MockKmsProvider::new();
+        let mocked_publisher = MockPublisherProvider::new();
+
+        // Manually create a test wallet before running tests
+        test_db.execute(
+            r#"
+        INSERT INTO ezex_deposit_wallets
+        (status, wallet_id, chain_id, description)
+        VALUES
+        (1, 'wallet-id-1', 'Pactus', 'test-wallet')
+        "#,
+        );
+
+        Self {
+            mocked_kms,
+            mocked_publisher,
+            db,
+        }
+    }
+
+    pub fn deposit_handler(self) -> DepositHandler {
+        DepositHandler::new(
+            Box::new(self.db),
+            Box::new(self.mocked_kms),
+            Box::new(self.mocked_publisher),
+        )
+    }
+}
 
 #[tokio::test]
-async fn test_generate_address_with_invalid_wallet_id() {
-    let pq_db = PostgresTestDB::new();
+async fn test_generate_address_unknown_chain() {
+    let test_db = PostgresTestDB::new();
+    let td = TestData::setup(&test_db);
 
-    let db = crate::database::postgres::postgres::PostgresDB::new(&pq_db.con_string(), 1).unwrap();
-    let kms = MockKmsProvider::new();
-    let deposit = DepositHandler::new(db, kms);
+    let request = Request::new(GenerateAddressRequest {
+        user_id: "alice".into(),
+        chain_id: "unknown_chain".into(),
+        asset_id: "PAC".into(),
+    });
 
-    let user_id = "Alice".to_string();
-    let request = deposit::address::Generate {
-        user_id: user_id.clone(),
-        coin: "PAC".to_string(),
-        wallet_id: "valid-wallet-id".to_string(),
-    };
-
-    let res = deposit.generate_address(request).await;
+    let res = td.deposit_handler().generate_address(request).await;
     assert!(res.is_err());
 }
 
 #[tokio::test]
-async fn test_generate_address_eth() {
-    let pq_db = PostgresTestDB::new();
+async fn test_generate_address() {
+    let test_db = PostgresTestDB::new();
+    let mut td = TestData::setup(&test_db);
 
-    let db = crate::database::postgres::postgres::PostgresDB::new(&pq_db.con_string(), 1).unwrap();
-    let kms = MockKmsProvider::new();
-    let deposit = DepositHandler::new(db, kms);
+    let expected_address = Address {
+        wallet_id: "wallet-id-1".into(),
+        user_id: "alice".into(),
+        chain_id: "Pactus".into(),
+        asset_id: "PAC".into(),
+        address: "address-alice".into(),
+        created_at: chrono::Utc::now().naive_utc(),
+    };
+    let cloned_expected_address = expected_address.clone();
 
-    let user_id = "Alice".to_string();
-    let request = deposit::address::Generate {
-        user_id,
-        coin: "PAC".to_string(),
-        wallet_id: "wallet_1".to_string(),
+    td.mocked_kms
+        .expect_generate_address()
+        .once()
+        .withf(
+            move |wallet_id: &str, user_id: &str, chain_id: &str, asset_id: &str| {
+                wallet_id == expected_address.wallet_id
+                    && user_id == expected_address.user_id
+                    && chain_id == expected_address.chain_id
+                    && asset_id == expected_address.asset_id
+            },
+        )
+        .return_once(|_, _, _, _| Ok(cloned_expected_address));
+
+    td.mocked_publisher
+        .expect_publish()
+        .once()
+        .withf(|evt| evt.key() == Generated::event_key)
+        .return_once(|_| Ok(()));
+
+    let request = GenerateAddressRequest {
+        user_id: "alice".into(),
+        chain_id: "Pactus".into(),
+        asset_id: "PAC".into(),
     };
 
-    let res = deposit.generate_address(request).await.unwrap().remove(0);
-    let event = res
-        .as_any()
-        .downcast_ref::<deposit::address::Generated>()
-        .unwrap();
-    assert_eq!(event.deposit_address, "eth_address");
-}
+    let deposit = td.deposit_handler();
 
-#[tokio::test]
-async fn test_generate_address_btc() {
-    let pq_db = PostgresTestDB::new();
-
-    let db = crate::database::postgres::postgres::PostgresDB::new(&pq_db.con_string(), 1).unwrap();
-    let kms = MockKmsProvider::new();
-    let deposit = DepositHandler::new(db, kms);
-
-    let request = deposit::address::Generate {
-        user_id: "alice".to_owned(),
-        coin: "PAC".to_string(),
-        wallet_id: "wallet_1".to_owned(),
-    };
-
-    let res = deposit.generate_address(request).await.unwrap().remove(0);
-    let event = res
-        .as_any()
-        .downcast_ref::<deposit::address::Generated>()
-        .unwrap();
-    assert_eq!(event.deposit_address, "???");
-}
-
-#[tokio::test]
-async fn test_process_duplicate_address_generate() {
-    let pq_db = PostgresTestDB::new();
-
-    let db = crate::database::postgres::postgres::PostgresDB::new(&pq_db.con_string(), 1).unwrap();
-    let kms = MockKmsProvider::new();
-    let deposit = DepositHandler::new(db, kms);
-
-    let request = deposit::address::Generate {
-        user_id: "alice".to_owned(),
-        coin: "PAC".to_string(),
-        wallet_id: "wallet_1".to_owned(),
-    };
-
-    let res_1 = deposit
-        .generate_address(request.clone())
+    let res = deposit
+        .generate_address(Request::new(request.clone()))
         .await
-        .unwrap()
-        .remove(0);
-    let res_2 = deposit.generate_address(request).await;
-
-    let event_1 = res_1
-        .as_any()
-        .downcast_ref::<deposit::address::Generated>()
         .unwrap();
+    assert_eq!(res.get_ref().address.as_str(), "address-alice");
 
-    assert_eq!(
-        event_1.deposit_address,
-        "2N4sexvpWpMUjoVHHFXuAUitngG8pwb2sKf"
-    );
-    assert!(res_2.is_err(), "duplicated address found");
-}
-
-#[tokio::test]
-async fn test_check_coin_exists() {
-    let pq_db = PostgresTestDB::new();
-
-    let db = crate::database::postgres::postgres::PostgresDB::new(&pq_db.con_string(), 1).unwrap();
-    let kms = MockKmsProvider::new();
-    let deposit = DepositHandler::new(db, kms);
-
-    let request = deposit::address::Generate {
-        user_id: "alice".to_owned(),
-        coin: "PAC".to_string(),
-        wallet_id: "60def63ab9390d000630211559c1544d".to_owned(),
-    };
-
-    let res = deposit.generate_address(request).await;
-    assert!(res.is_err())
-}
-
-#[tokio::test]
-async fn test_check_duplicate_address() {
-    let pq_db = PostgresTestDB::new();
-
-    let db = crate::database::postgres::postgres::PostgresDB::new(&pq_db.con_string(), 1).unwrap();
-    let kms = MockKmsProvider::new();
-    let deposit = DepositHandler::new(db, kms);
-
-    let request = deposit::address::Generate {
-        user_id: "alice".to_owned(),
-        coin: "PAC".to_string(),
-        wallet_id: "60def63ab9390d000630211559c1544d".to_owned(),
-    };
-
-    let request_1 = deposit::address::Generate {
-        user_id: "bob".to_owned(),
-        coin: "PAC".to_string(),
-        wallet_id: "60def63ab9390d000630211559c1544d".to_owned(),
-    };
-
-    let _res = deposit.generate_address(request).await;
-    let res_1 = deposit.generate_address(request_1).await;
-    assert!(res_1.is_err())
+    // Test Duplicated Address
+    let res = deposit.generate_address(Request::new(request)).await;
+    assert!(res.is_err());
 }

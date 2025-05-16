@@ -35,6 +35,9 @@ pub trait DatabaseReader {
 
 /// Provides write access to the database.
 pub trait DatabaseWriter {
+    /// Set the wallet_id for the given `chain_id`.
+    fn set_wallet(&self, chain_id: &str, wallet_id: &str) -> anyhow::Result<Option<()>>;
+
     /// Saves a newly generated address to the database.
     ///
     /// # Errors

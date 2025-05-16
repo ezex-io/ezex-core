@@ -2,12 +2,11 @@ use common::testsuite::postgres::PostgresTestDB;
 
 use crate::{
     database::{
-        postgres::{config::Config, postgres::PostgresDB, schema::address_book::user_id},
+        postgres::{config::Config, postgres::PostgresDB},
         provider::{DatabaseReader, DatabaseWriter},
     },
     types::Address,
 };
-
 
 #[test]
 fn test_address_operations() {
@@ -52,7 +51,15 @@ fn test_address_operations() {
 
     // Verify addresses
     for addr in test_cases {
-        let retrieved = db.get_address(&addr.wallet_id, &addr.user_id, &addr.chain_id, &addr.asset_id).unwrap().unwrap();
+        let retrieved = db
+            .get_address(
+                &addr.wallet_id,
+                &addr.user_id,
+                &addr.chain_id,
+                &addr.asset_id,
+            )
+            .unwrap()
+            .unwrap();
         assert_eq!(retrieved.address, addr.address);
     }
 }

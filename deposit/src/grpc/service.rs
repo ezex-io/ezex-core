@@ -19,14 +19,14 @@ impl DepositServiceImpl {
 impl DepositService for DepositServiceImpl {
     async fn list_blockchains(
         &self,
-        req: Request<ListBlockchainsRequest>,
+        _req: Request<ListBlockchainsRequest>,
     ) -> anyhow::Result<Response<ListBlockchainsResponse>, Status> {
         todo!()
     }
 
     async fn list_blockchain_assets(
         &self,
-        req: Request<ListBlockchainAssetsRequest>,
+        _req: Request<ListBlockchainAssetsRequest>,
     ) -> anyhow::Result<Response<ListBlockchainAssetsResponse>, Status> {
         todo!()
     }

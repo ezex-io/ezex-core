@@ -1,9 +1,5 @@
 use common::event::*;
-use redis_stream_bus::{
-    client::RedisClient,
-    config::Config as RedisConfig,
-    entry::Entry,
-};
+use redis_stream_bus::{client::RedisClient, config::Config as RedisConfig, entry::Entry};
 use serde::Serialize;
 use tonic::async_trait;
 
@@ -25,7 +21,9 @@ impl RedisBus {
 impl PublisherProvider for RedisBus {
     async fn publish(&self, event: Box<dyn EventMessage>) -> anyhow::Result<()> {
         let serializer = serde_redis::Serializer;
-        let fields = event.serialize(serializer).unwrap();
+        let fields = event
+            .serialize(serializer)
+            .map_err(|e| anyhow::anyhow!("unable to encode event: {e}"))?;
 
         let entry = Entry {
             id: None,
@@ -33,7 +31,10 @@ impl PublisherProvider for RedisBus {
             fields,
         };
 
-        self.client.xadd(entry).await.unwrap();
+        self.client
+            .xadd(entry)
+            .await
+            .map_err(|e| anyhow::anyhow!("unable to add stream: {e}"))?;
 
         Ok(())
     }

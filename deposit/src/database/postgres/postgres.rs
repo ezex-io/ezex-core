@@ -104,6 +104,10 @@ impl DatabaseReader for PostgresDB {
 }
 
 impl DatabaseWriter for PostgresDB {
+    fn set_wallet(&self, _chain_id: &str, _wallet_id: &str) -> anyhow::Result<Option<()>> {
+        todo!()
+    }
+
     fn save_address(&self, address: &Address) -> anyhow::Result<()> {
         let new_address = AddressRecord {
             id: uuid::Uuid::new_v4(),
