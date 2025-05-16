@@ -22,7 +22,6 @@ pub mod address {
     #[event_key("deposit:address:generated")]
     pub struct Generated {
         pub user_id: String,
-        pub wallet_id: String,
         pub chain_id: String,
         pub asset_id: String,
         pub address: String,

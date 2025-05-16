@@ -63,5 +63,5 @@ message GenerateAddressRequest {
 }
 
 message GenerateAddressResponse {
-  string address = 2;
+  string address = 1;
 }

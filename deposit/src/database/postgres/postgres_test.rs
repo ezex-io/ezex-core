@@ -1,9 +1,6 @@
-use crate::{
-    database::{
-        postgres::{config::Config, postgres::PostgresDB, schema::address_book::user_id},
-        provider::{DatabaseReader, DatabaseWriter},
-    },
-    types::AddressScope,
+use crate::database::{
+    postgres::{config::Config, postgres::PostgresDB, schema::address_book::user_id},
+    provider::{DatabaseReader, DatabaseWriter},
 };
 
 fn make_test_db() -> PostgresDB {

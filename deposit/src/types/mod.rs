@@ -15,9 +15,10 @@ pub struct Wallet {
 
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub struct Address {
+    pub wallet_id: String,
     pub user_id: String,
     pub chain_id: String,
-    pub wallet_id: String,
+    pub asset_id: String,
     pub address: String,
     pub created_at: chrono::NaiveDateTime,
 }

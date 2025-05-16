@@ -1,12 +1,10 @@
 use crate::{
-    // database::provider::DatabaseProvider,
     deposit::DepositHandler,
     grpc::{
         config::Config,
         deposit::deposit_service_server::DepositServiceServer,
         service::DepositServiceImpl,
     },
-    // kms::provider::KmsProvider,
 };
 use log::{error, info};
 use tonic::transport::Server;
