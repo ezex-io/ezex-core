@@ -3,18 +3,10 @@ mod topics;
 
 use assert_cmd::prelude::*;
 
-use common::testsuite::{
-    self,
-    postgres::PostgresTestDB,
-    redis::RedisTestClient,
-};
+use common::testsuite::{self, postgres::PostgresTestDB, redis::RedisTestClient};
 use ezex_deposit::grpc::deposit::deposit_service_client::DepositServiceClient;
 use std::{
-    process::{
-        Child,
-        Command,
-        Stdio,
-    },
+    process::{Child, Command, Stdio},
     time::Duration,
 };
 use tokio::time::sleep;

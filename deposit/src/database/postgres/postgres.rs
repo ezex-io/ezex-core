@@ -7,8 +7,7 @@ use crate::{
     types::{self, WalletStatus},
 };
 use diesel::{
-    expression::is_aggregate::No,
-    pg::PgConnection,
+    // pg::PgConnection,
     prelude::*,
     r2d2::{ConnectionManager, Pool},
 };

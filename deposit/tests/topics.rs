@@ -1,12 +1,6 @@
 use crate::TestContext;
-use chains_rs::{
-    asset::Asset,
-    pactus::PactusPACAsset,
-};
-use common::event::{
-    TopicMessage,
-    deposit,
-};
+use chains_rs::{asset::Asset, pactus::PactusPACAsset};
+use common::event::{TopicMessage, deposit};
 
 async fn send_and_receive_generate_message(
     ctx: &mut TestContext,

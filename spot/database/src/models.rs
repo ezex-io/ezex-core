@@ -3,10 +3,8 @@
 
 use bigdecimal::BigDecimal;
 use diesel::prelude::*;
-use serde::{
-    Deserialize,
-    Serialize,
-};
+use serde::{Deserialize, Serialize};
+use std::str::FromStr;
 
 use super::schema::*;
 
@@ -25,8 +23,11 @@ impl OrderType {
             OrderType::Market => "MARKET",
         }
     }
+}
 
-    pub fn from_str(s: &str) -> Result<Self, String> {
+impl FromStr for OrderType {
+    type Err = String;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.to_uppercase().as_str() {
             "LIMIT" => Ok(OrderType::Limit),
             "MARKET" => Ok(OrderType::Market),
@@ -49,8 +50,13 @@ impl OrderSide {
             OrderSide::Sell => "SELL",
         }
     }
+}
 
-    pub fn from_str(s: &str) -> Result<Self, String> {
+// Implement the standard FromStr trait instead of a custom from_str method
+impl FromStr for OrderSide {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.to_uppercase().as_str() {
             "BUY" => Ok(OrderSide::Buy),
             "SELL" => Ok(OrderSide::Sell),
@@ -73,8 +79,12 @@ impl MarketRole {
             MarketRole::Taker => "TAKER",
         }
     }
+}
 
-    pub fn from_str(s: &str) -> Result<Self, String> {
+impl FromStr for MarketRole {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.to_uppercase().as_str() {
             "MAKER" => Ok(MarketRole::Maker),
             "TAKER" => Ok(MarketRole::Taker),
@@ -103,8 +113,11 @@ impl OrderStatus {
             OrderStatus::PartiallyFilled => "PARTIALLY_FILLED",
         }
     }
+}
 
-    pub fn from_str(s: &str) -> Result<Self, String> {
+impl FromStr for OrderStatus {
+    type Err = String;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.to_uppercase().as_str() {
             "OPEN" => Ok(OrderStatus::Open),
             "FILLED" => Ok(OrderStatus::Filled),

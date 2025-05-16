@@ -1,11 +1,6 @@
 use anyhow::{Context, Result};
-use clap::{Args, Subcommand};
-use ezex_deposit::{
-    database,
-    deposit,
-    event_bus,
-    kms::{self, kms::DepositKms},
-};
+use clap::Subcommand;
+use ezex_deposit::{database, deposit, event_bus, kms};
 
 #[derive(Debug, Subcommand)]
 pub enum AddressCmd {

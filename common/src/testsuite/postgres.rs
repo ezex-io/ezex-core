@@ -1,9 +1,5 @@
 // use async_std::task::sleep;
-use diesel::{
-    Connection,
-    PgConnection,
-    RunQueryDsl,
-};
+use diesel::{Connection, PgConnection, RunQueryDsl};
 use std::env;
 
 pub struct PostgresTestDB {

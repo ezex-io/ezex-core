@@ -1,9 +1,6 @@
 use common::event::EventMessage;
 use procedural::Event;
-use serde::{
-    Deserialize,
-    Serialize,
-};
+use serde::{Deserialize, Serialize};
 
 #[test]
 fn test_stream_name() {

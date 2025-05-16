@@ -1,14 +1,8 @@
-use crate::event::EventMessage;
-use redis::{
-    Commands,
-    streams::StreamPendingReply,
-};
+// use crate::event::EventMessage;
+use redis::{Commands, streams::StreamPendingReply};
 use redis_stream_bus::entry::Entry;
 use serde::de::DeserializeOwned;
-use std::{
-    env,
-    time::Duration,
-};
+use std::{env, time::Duration};
 use tokio::time::sleep;
 
 pub struct RedisTestClient {
@@ -62,7 +56,7 @@ impl RedisTestClient {
     //     //     .unwrap()
     // }
 
-    pub async fn should_ack<'a>(&mut self, key: &str) {
+    pub async fn should_ack(&mut self, key: &str) {
         // Wait for 5 seconds
         let mut counter: i32 = 0;
         loop {
@@ -80,10 +74,9 @@ impl RedisTestClient {
             }
         }
     }
-
     // ID for unread message can be set to "$"
     // To read messages from the beginning set ID to "0-0"
-    pub fn xread_sync<T: DeserializeOwned>(&mut self, key: &str, id: &str) -> (Entry, T) {
+    pub fn xread_sync<T: DeserializeOwned>(&mut self, _key: &str, _id: &str) -> (Entry, T) {
         todo!()
         // let res = self
         //     .client

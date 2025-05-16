@@ -1,16 +1,6 @@
 use proc_macro::TokenStream;
-use quote::{
-    quote,
-    quote_spanned,
-};
-use syn::{
-    self,
-    DeriveInput,
-    Lit,
-    Meta,
-    NestedMeta,
-    parse_macro_input,
-};
+use quote::{quote, quote_spanned};
+use syn::{self, DeriveInput, Expr, Lit, parse_macro_input};
 
 #[proc_macro_derive(Event, attributes(event_key))]
 pub fn derive_event(input: TokenStream) -> TokenStream {
@@ -19,7 +9,6 @@ pub fn derive_event(input: TokenStream) -> TokenStream {
     match event_key(ast.clone()) {
         Ok(event_key) => {
             let gen_code = quote! {
-
                 impl #ident {
                     pub const name: &'static str = #event_key;
                 }
@@ -39,27 +28,35 @@ pub fn derive_event(input: TokenStream) -> TokenStream {
     }
 }
 
+/// handle both attr formats:
+/// - #[event_key("foo:bar")]
+/// - #[event_key = "foo:bar"]
 pub(crate) fn event_key(input: DeriveInput) -> Result<Lit, String> {
     let attrs = input.attrs;
-    match attrs.first() {
-        Some(attr) => match attr.parse_meta() {
-            Ok(meta) => {
-                let name = meta.path().get_ident();
-                if name.expect("please add event name") == "event_key" {
-                    match meta {
-                        Meta::List(list) => match list.nested.first().unwrap() {
-                            NestedMeta::Lit(l) => Ok(l.clone()),
-                            _ => Err("Not a lit str".to_owned()),
-                        },
-                        _ => Err("Not a meta list".to_owned()),
+
+    // Find the event_key attribute
+    match attrs.iter().find(|attr| attr.path().is_ident("event_key")) {
+        Some(attr) => {
+            // Try to parse as a string literal directly
+            match attr.parse_args::<Lit>() {
+                Ok(lit) => Ok(lit),
+                Err(_) => {
+                    // If direct parsing fails, try the more complex approach
+                    let meta = attr.meta.clone();
+                    if let Ok(list) = meta.require_list() {
+                        if let Ok(lit) = list.parse_args::<Lit>() {
+                            return Ok(lit);
+                        }
                     }
-                } else {
-                    Err("invalid name, should be event_key".to_owned())
+
+                    Err(
+                        "Expected a literal string for event_key, e.g., #[event_key(\"my:event\")]"
+                            .to_owned(),
+                    )
                 }
             }
-            Err(_) => Err("Unable to parse meta".to_owned()),
-        },
-        None => Err("Need event_key".to_owned()),
+        }
+        None => Err("Need event_key attribute".to_owned()),
     }
 }
 
@@ -73,19 +70,22 @@ pub fn derive_env_prefix(input: TokenStream) -> TokenStream {
     let prefix = ast
         .attrs
         .iter()
-        .find(|attr| attr.path.is_ident("env_prefix"))
-        .and_then(|attr| match attr.parse_meta() {
-            Ok(meta) => match meta {
-                Meta::NameValue(name_value) => {
-                    if let Lit::Str(s) = name_value.lit {
+        .find(|attr| attr.path().is_ident("env_prefix"))
+        .and_then(|attr| {
+            if let Ok(meta) = attr.meta.require_name_value() {
+                // In syn 2.0, meta.value is an Expr, not a Lit
+                if let Expr::Lit(expr_lit) = &meta.value {
+                    if let Lit::Str(s) = &expr_lit.lit {
                         Some(s.value())
                     } else {
                         None
                     }
+                } else {
+                    None
                 }
-                _ => None,
-            },
-            Err(_) => None,
+            } else {
+                None
+            }
         })
         .unwrap_or_default();
 

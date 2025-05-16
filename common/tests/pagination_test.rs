@@ -1,17 +1,13 @@
-use diesel::{
-    Connection,
-    PgConnection,
-};
+use diesel::{Connection, PgConnection};
 use dotenv::dotenv;
 use std::env;
 
-fn connection() -> PgConnection {
+pub fn connection() -> PgConnection {
     dotenv().ok();
     let database_url = env::var("TEST_DATABASE_URL").expect("TEST_DATABASE_URL must be set");
     PgConnection::establish(&database_url).expect("Error connnecting to databse")
 }
-
-// TODO: fix me
+//FIXME:
 // #[test]
 // fn test_load_and_count_pages() {
 //     let mut conn = connection();

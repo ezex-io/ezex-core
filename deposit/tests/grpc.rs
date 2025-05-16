@@ -1,8 +1,5 @@
 use crate::TestContext;
-use ezex_deposit::grpc::deposit::{
-    GetAddressRequest,
-    VersionRequest,
-};
+use ezex_deposit::grpc::deposit::{GetAddressRequest, VersionRequest};
 
 pub async fn test_grpc_version(ctx: &mut TestContext) {
     let request = VersionRequest {};

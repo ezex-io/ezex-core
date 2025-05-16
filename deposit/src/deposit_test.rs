@@ -1,15 +1,9 @@
 use crate::{
     config::Config,
     deposit::DepositHandler,
-    kms::{
-        mock::MockKmsProvider,
-        provider::KmsProvider,
-    },
+    kms::{mock::MockKmsProvider, provider::KmsProvider},
 };
-use common::{
-    consts::*,
-    testsuite::postgres::PostgresTestDB,
-};
+use common::{consts::*, testsuite::postgres::PostgresTestDB};
 use mockall::predicate::*;
 use serde_json::json;
 

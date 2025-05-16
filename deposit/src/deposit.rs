@@ -1,11 +1,11 @@
 use crate::{
-    config::Config,
+    // config::Config,
     database::provider::DatabaseProvider,
     event_bus::{events, provider::PublisherProvider},
     kms::provider::KmsProvider,
     types::Address,
 };
-use common::event::*;
+// use common::event::*;
 use log::info;
 
 pub struct DepositHandler {

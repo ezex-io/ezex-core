@@ -1,10 +1,6 @@
 use std::env;
 
-use config::{
-    Config,
-    Environment,
-    File,
-};
+use config::{Config, Environment, File};
 use dotenv::dotenv;
 use serde::Deserialize;
 

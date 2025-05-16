@@ -1,7 +1,4 @@
-use serde::{
-    Deserialize,
-    Serialize,
-};
+use serde::{Deserialize, Serialize};
 use structopt::StructOpt;
 
 #[derive(Debug, Clone, Serialize, Deserialize, StructOpt)]

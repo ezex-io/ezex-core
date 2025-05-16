@@ -1,11 +1,11 @@
-use crate::event::EventMessage;
+// use crate::event::EventMessage;
 use futures::channel::mpsc::Receiver;
 
 use redis_stream_bus::entry::Entry;
 
 #[async_trait::async_trait]
 pub trait EventBus: Sized + Send + Sync {
-    async fn run(mut self, read_rx: Receiver<Entry>) {
+    async fn run(mut self, _read_rx: Receiver<Entry>) {
         log::info!("Starting redis client for {} service.", self.module_name());
 
         // TODO: move me to ...???
