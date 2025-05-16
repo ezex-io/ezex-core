@@ -115,7 +115,7 @@ impl DepositHandler {
                     .await
                     .map_err(|e| Status::internal(e.to_string()))?;
 
-                info!("A new address generated. {:?}", address);
+                info!("address generated. {address}");
 
                 Ok(Response::new(GenerateAddressResponse {
                     address: address.address,
@@ -128,7 +128,7 @@ impl DepositHandler {
         match self
             .database
             .get_wallet(chain_id)
-            .map_err(|e| Status::internal(format!("Failed to get wallet: {}", e)))?
+            .map_err(|e| Status::internal(format!("unable to get wallet: {e}")))?
         {
             Some(wallet) => Ok(wallet),
             None => Err(Status::not_found("unable to find wallet_id")),
