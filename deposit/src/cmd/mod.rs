@@ -14,9 +14,9 @@ pub enum Cmd {
 
 pub async fn handle(cmd: Cmd) {
     match cmd {
-        Cmd::Start(args) => {
+        Cmd::Start(_args) => {
             todo!()
         }
-        Cmd::Address(cmd) => {}
+        Cmd::Address(_cmd) => {}
     }
 }

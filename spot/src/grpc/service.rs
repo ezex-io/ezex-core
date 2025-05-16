@@ -1,14 +1,8 @@
-use std::{
-    str::FromStr,
-    sync::Arc,
-};
+use std::{str::FromStr, sync::Arc};
 
 use super::{
     helper::convert_trades,
-    spot::{
-        CancelAllOrdersRequest,
-        CancelAllOrdersResponse,
-    },
+    spot::{CancelAllOrdersRequest, CancelAllOrdersResponse},
 };
 use crate::{
     grpc::spot::{
@@ -28,21 +22,11 @@ use crate::{
     models::trade_order::TradeOrder,
     utils,
 };
-use anyhow::{
-    Context,
-    Result,
-};
+use anyhow::{Context, Result};
 use bigdecimal::BigDecimal;
-use database::{
-    models::NewMarket,
-    persistence::ThreadSafePersistence,
-};
+use database::{models::NewMarket, persistence::ThreadSafePersistence};
 use tokio::sync::RwLock;
-use tonic::{
-    Request,
-    Response,
-    Status,
-};
+use tonic::{Request, Response, Status};
 
 pub struct SpotServiceImpl {
     pub market_manager: Arc<RwLock<MarketManager>>,

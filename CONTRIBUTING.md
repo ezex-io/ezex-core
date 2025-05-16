@@ -37,7 +37,7 @@ cargo test
 We have linting and formatting tools to check the code convention. Please make sure you are following the Rust code convention.
 Format your change by running this command:
 ```
-cargo fmt --all
+cargo +nightly fmt --all
 cargo clippy --all-targets --all-features
 ```
 

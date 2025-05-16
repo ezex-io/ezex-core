@@ -2,15 +2,9 @@
 // Implementation of repository pattern for database operations
 
 use super::{
-    db::{
-        DbConnection,
-        DbPool,
-    },
+    db::{DbConnection, DbPool},
     models::*,
-    provider::{
-        DatabaseReader,
-        DatabaseWriter,
-    },
+    provider::{DatabaseReader, DatabaseWriter},
     schema::*,
 };
 use anyhow::Result;
@@ -77,15 +71,16 @@ impl Repository {
         Ok(result)
     }
 
+    #[allow(clippy::too_many_arguments)]
     pub fn update_order(
         &self,
         order_id: &str,
         remain: BigDecimal,
-        frozen: BigDecimal,
+        _frozen: BigDecimal,
         filled_base: BigDecimal,
         filled_quote: BigDecimal,
         filled_fee: BigDecimal,
-        partially_filled: bool,
+        _partially_filled: bool,
         status: &str,
     ) -> Result<Order> {
         let conn = &mut self.get_conn()?;

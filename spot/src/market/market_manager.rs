@@ -1,19 +1,9 @@
 use super::market::Market;
-use crate::models::{
-    matched_trade::MatchedTrade,
-    trade_order::TradeOrder,
-};
-use anyhow::{
-    anyhow,
-    Context,
-    Result,
-};
+use crate::models::{matched_trade::MatchedTrade, trade_order::TradeOrder};
+use anyhow::{anyhow, Context, Result};
 use std::{
     collections::HashMap,
-    sync::{
-        Arc,
-        RwLock,
-    },
+    sync::{Arc, RwLock},
 };
 
 #[derive(Debug, Clone)]
@@ -45,7 +35,7 @@ impl MarketManager {
             markets.insert(market_id.to_string(), market);
         }
         tracing::debug!(target: "market_manager", "Created market {}", market_id);
-        println!("Created market {:?}", markets);
+        println!("Created market {markets:?}");
         Ok(())
     }
 
@@ -57,7 +47,7 @@ impl MarketManager {
 
         let market = markets
             .get_mut(market_id)
-            .context(format!("Market {} not found", market_id))?;
+            .context(format!("Market {market_id} not found"))?;
         market.start_market();
         tracing::debug!(target: "market_manager", "Started market {}", market_id);
         Ok(())
@@ -71,7 +61,7 @@ impl MarketManager {
 
         let market = markets
             .get_mut(market_id)
-            .context(format!("Market {} not found", market_id))?;
+            .context(format!("Market {market_id} not found"))?;
         market.stop_market();
         Ok(())
     }
@@ -97,7 +87,7 @@ impl MarketManager {
 
         let market = markets
             .get(market_id)
-            .context(format!("Market {} not found", market_id))?;
+            .context(format!("Market {market_id} not found"))?;
         market.cancel_order(order_id)
     }
 
@@ -109,7 +99,7 @@ impl MarketManager {
 
         let market = markets
             .get(market_id)
-            .context(format!("Market {} not found", market_id))?;
+            .context(format!("Market {market_id} not found"))?;
         market.get_order_by_id(order_id)
     }
 
@@ -121,7 +111,7 @@ impl MarketManager {
 
         let market = markets
             .get(market_id)
-            .context(format!("Market {} not found", market_id))?;
+            .context(format!("Market {market_id} not found"))?;
         market.cancel_all_orders()
     }
 
@@ -140,10 +130,7 @@ impl MarketManager {
 #[cfg(test)]
 mod tests {
     use crate::{
-        models::trade_order::{
-            OrderSide,
-            OrderType,
-        },
+        models::trade_order::{OrderSide, OrderType},
         tests::test_models,
     };
 

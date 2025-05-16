@@ -1,18 +1,8 @@
 use anyhow::Result;
-use log::{
-    debug,
-    info,
-};
-use std::sync::{
-    Arc,
-    Mutex,
-};
+use log::{debug, info};
+use std::sync::{Arc, Mutex};
 
-use crate::{
-    db::establish_connection_pool,
-    models::*,
-    repository::Repository,
-};
+use crate::{db::establish_connection_pool, models::*, repository::Repository};
 
 /// ThreadSafePersistence provides a thread-safe way to access the repository
 /// for persisting entities to the database.
@@ -44,7 +34,7 @@ impl ThreadSafePersistence {
 
     // Market operations
     pub fn get_market(&self, market_id: &str) -> Result<Option<Market>> {
-        debug!("Getting market with ID: {}", market_id);
+        debug!("Getting market with ID: {market_id}");
         self.repository.get_market(market_id)
     }
 
@@ -55,48 +45,45 @@ impl ThreadSafePersistence {
 
     // Order operations
     pub fn get_order(&self, order_id: &str) -> Result<Option<Order>> {
-        debug!("Getting order with ID: {}", order_id);
+        debug!("Getting order with ID: {order_id}");
         self.repository.get_order(order_id)
     }
 
     pub fn get_open_orders_for_market(&self, market_id: &str) -> Result<Vec<Order>> {
-        debug!("Getting open orders for market: {}", market_id);
+        debug!("Getting open orders for market: {market_id}");
         self.repository.get_open_orders_for_market(market_id)
     }
 
     pub fn get_user_orders(&self, user_id: &str, limit: i64) -> Result<Vec<Order>> {
-        debug!("Getting orders for user: {} (limit: {})", user_id, limit);
+        debug!("Getting orders for user: {user_id} (limit: {limit})");
         self.repository.get_user_orders(user_id, limit)
     }
 
     // Trade operations
     pub fn get_trades_for_market(&self, market_id: &str, limit: i64) -> Result<Vec<Trade>> {
-        debug!(
-            "Getting trades for market: {} (limit: {})",
-            market_id, limit
-        );
+        debug!("Getting trades for market: {market_id} (limit: {limit})");
         self.repository.get_trades_for_market(market_id, limit)
     }
 
     pub fn get_trades_for_order(&self, order_id: &str) -> Result<Vec<Trade>> {
-        debug!("Getting trades for order: {}", order_id);
+        debug!("Getting trades for order: {order_id}");
         self.repository.get_trades_for_order(order_id)
     }
 
     pub fn get_user_trades(&self, user_id: &str, limit: i64) -> Result<Vec<Trade>> {
-        debug!("Getting trades for user: {} (limit: {})", user_id, limit);
+        debug!("Getting trades for user: {user_id} (limit: {limit})");
         self.repository.get_user_trades(user_id, limit)
     }
 
     // Balance operations
     pub fn get_balance(&self, user_id: &str, asset: &str) -> Result<Option<Balance>> {
-        debug!("Getting balance for user: {}, asset: {}", user_id, asset);
+        debug!("Getting balance for user: {user_id}, asset: {asset}");
         self.repository.get_balance(user_id, asset)
     }
 
     // Market stats operations
     pub fn get_market_stats(&self, market_id: &str) -> Result<Option<MarketStat>> {
-        debug!("Getting market stats for market: {}", market_id);
+        debug!("Getting market stats for market: {market_id}");
         self.repository.get_market_stats(market_id)
     }
 
@@ -122,6 +109,7 @@ impl ThreadSafePersistence {
         self.repository.create_order(order_data)
     }
 
+    #[allow(clippy::too_many_arguments)]
     pub fn update_order(
         &self,
         order_id: &str,
@@ -137,7 +125,7 @@ impl ThreadSafePersistence {
             .write_lock
             .lock()
             .map_err(|e| anyhow::anyhow!("Lock poisoned: {}", e))?;
-        info!("Updating order: {}", order_id);
+        info!("Updating order: {order_id}");
         self.repository.update_order(
             order_id,
             remain,
@@ -181,7 +169,7 @@ impl ThreadSafePersistence {
             .write_lock
             .lock()
             .map_err(|e| anyhow::anyhow!("Lock poisoned: {}", e))?;
-        info!("Updating balance for user: {}, asset: {}", user_id, asset);
+        info!("Updating balance for user: {user_id}, asset: {asset}");
         self.repository
             .update_or_create_balance(user_id, asset, available_delta, frozen_delta)
     }
@@ -200,7 +188,7 @@ impl ThreadSafePersistence {
             .write_lock
             .lock()
             .map_err(|e| anyhow::anyhow!("Lock poisoned: {}", e))?;
-        info!("Updating market stats for market: {}", market_id);
+        info!("Updating market stats for market: {market_id}");
         self.repository.update_market_stats(
             market_id,
             high_24h,

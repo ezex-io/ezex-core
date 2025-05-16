@@ -1,27 +1,13 @@
 use crate::{
-    grpc::spot::{
-        AddOrderRequest,
-        ProtoTrade,
-    },
+    grpc::spot::{AddOrderRequest, ProtoTrade},
     models::{
         matched_trade::MatchedTrade,
-        trade_order::{
-            OrderSide,
-            OrderType,
-            TradeOrder,
-        },
+        trade_order::{OrderSide, OrderType, TradeOrder},
     },
     utils,
 };
-use anyhow::{
-    anyhow,
-    Context,
-    Result,
-};
-use bigdecimal::{
-    BigDecimal,
-    Zero,
-};
+use anyhow::{anyhow, Context, Result};
+use bigdecimal::{BigDecimal, Zero};
 use std::str::FromStr;
 use tonic::Status;
 
@@ -30,10 +16,10 @@ impl TryFrom<AddOrderRequest> for TradeOrder {
 
     fn try_from(req: AddOrderRequest) -> Result<Self> {
         let order_type = OrderType::try_from(req.order_type.as_str())
-            .map_err(|e| Status::invalid_argument(format!("Invalid order type: {}", e)))?;
+            .map_err(|e| Status::invalid_argument(format!("Invalid order type: {e}")))?;
 
         let side = OrderSide::try_from(req.side.as_str())
-            .map_err(|e| Status::invalid_argument(format!("Invalid order side: {}", e)))?;
+            .map_err(|e| Status::invalid_argument(format!("Invalid order side: {e}")))?;
 
         let mut price = BigDecimal::from_str(&req.price)
             .context("Failed to parse price as Decimal")
@@ -114,21 +100,21 @@ impl TryFrom<ProtoTrade> for MatchedTrade {
             market_id: proto.market_id,
 
             price: BigDecimal::from_str(&proto.price)
-                .map_err(|e| anyhow!("Invalid price format: {}", e))?,
+                .map_err(|e| anyhow!("Invalid price format: {e}"))?,
             amount: BigDecimal::from_str(&proto.amount)
-                .map_err(|e| anyhow!("Invalid amount format: {}", e))?,
+                .map_err(|e| anyhow!("Invalid amount format: {e}"))?,
             quote_amount: BigDecimal::from_str(&proto.quote_amount)
-                .map_err(|e| anyhow!("Invalid quote amount format: {}", e))?,
+                .map_err(|e| anyhow!("Invalid quote amount format: {e}"))?,
             taker_user_id: proto.taker_user_id,
             taker_order_id: proto.taker_order_id,
 
             taker_fee: BigDecimal::from_str(&proto.taker_fee)
-                .map_err(|e| anyhow!("Invalid ask fee format: {}", e))?,
+                .map_err(|e| anyhow!("Invalid ask fee format: {e}"))?,
             maker_user_id: proto.maker_user_id,
             maker_order_id: proto.maker_order_id,
 
             maker_fee: BigDecimal::from_str(&proto.maker_fee)
-                .map_err(|e| anyhow!("Invalid bid fee format: {}", e))?,
+                .map_err(|e| anyhow!("Invalid bid fee format: {e}"))?,
         })
     }
 }

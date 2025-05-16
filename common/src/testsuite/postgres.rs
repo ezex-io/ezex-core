@@ -1,9 +1,5 @@
 // use async_std::task::sleep;
-use diesel::{
-    Connection,
-    PgConnection,
-    RunQueryDsl,
-};
+use diesel::{Connection, PgConnection, RunQueryDsl};
 use std::env;
 
 pub struct PostgresTestDB {
@@ -27,7 +23,7 @@ impl PostgresTestDB {
         let db_name = format!("test_db_{}", rand::random::<u16>());
 
         // Create a new database for the test
-        let query = diesel::sql_query(format!("CREATE DATABASE {};", db_name).as_str());
+        let query = diesel::sql_query(format!("CREATE DATABASE {db_name};").as_str());
         query.execute(&mut conn).unwrap();
 
         Self {

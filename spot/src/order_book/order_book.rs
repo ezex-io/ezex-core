@@ -1,23 +1,12 @@
 use crate::{
     models::{
         matched_trade::MatchedTrade,
-        trade_order::{
-            OrderSide,
-            OrderType,
-            TradeOrder,
-        },
+        trade_order::{OrderSide, OrderType, TradeOrder},
     },
-    utils::{
-        self,
-        generate_uuid_id,
-        is_zero,
-    },
+    utils::{self, generate_uuid_id, is_zero},
 };
 use bigdecimal::BigDecimal;
-use std::collections::{
-    BinaryHeap,
-    HashMap,
-};
+use std::collections::{BinaryHeap, HashMap};
 
 use colored::*;
 
@@ -344,11 +333,7 @@ impl OrderBook {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::models::trade_order::{
-        OrderSide,
-        OrderType,
-        TradeOrder,
-    };
+    use crate::models::trade_order::{OrderSide, OrderType, TradeOrder};
     use bigdecimal::BigDecimal;
     use env_logger;
     use std::str::FromStr;

@@ -4,6 +4,7 @@ use crate::{
 };
 use tonic::{Request, Response, Status};
 
+#[allow(dead_code)]
 pub struct DepositServiceImpl {
     deposit: DepositHandler,
 }
@@ -39,7 +40,7 @@ impl DepositService for DepositServiceImpl {
 
     async fn get_address(
         &self,
-        request: Request<GetAddressRequest>,
+        _request: Request<GetAddressRequest>,
     ) -> anyhow::Result<Response<GetAddressResponse>, Status> {
         // let user_id = request.get_ref().user_id.to_owned();
         // let chain_id = request.get_ref().chain_id.to_owned();

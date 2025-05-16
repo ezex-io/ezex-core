@@ -1,3 +1,5 @@
+#![allow(unused)]
+
 use crate::models::*;
 use anyhow::Result;
 use bigdecimal::BigDecimal;
@@ -30,6 +32,8 @@ pub trait DatabaseWriter {
 
     // Order Writes
     fn create_order(&self, order_data: NewOrder) -> Result<Order>;
+
+    #[allow(clippy::too_many_arguments)]
     fn update_order(
         &self,
         order_id: &str,

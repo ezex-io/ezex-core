@@ -1,8 +1,5 @@
 use anyhow;
-use std::{
-    panic,
-    process,
-};
+use std::{panic, process};
 
 pub fn value_or_error(value: &serde_json::Value, key: &str) -> anyhow::Result<serde_json::Value> {
     match value.get(key) {
@@ -16,7 +13,7 @@ pub fn exit_on_panic() {
     let orig_hook = panic::take_hook();
     panic::set_hook(Box::new(move |panic_info| {
         // invoke the default handler and exit the process
-        log::error!("Exiting On : {:#?}", panic_info);
+        log::error!("Exiting On : {panic_info:#?}");
         orig_hook(panic_info);
         process::exit(1);
     }));

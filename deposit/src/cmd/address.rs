@@ -1,11 +1,6 @@
 use anyhow::{Context, Result};
-use clap::{Args, Subcommand};
-use ezex_deposit::{
-    database,
-    deposit,
-    event_bus,
-    kms::{self, kms::DepositKms},
-};
+use clap::Subcommand;
+use ezex_deposit::{database, deposit, event_bus, kms};
 
 #[derive(Debug, Subcommand)]
 pub enum AddressCmd {
@@ -21,7 +16,7 @@ pub enum AddressCmd {
 impl AddressCmd {
     pub async fn execute(&self) {
         if let Err(err) = self.execute_inner().await {
-            eprintln!("Error Details: {:#}", err);
+            eprintln!("Error Details: {err:#}");
             std::process::exit(1);
         }
     }
@@ -62,11 +57,10 @@ impl AddressCmd {
                     .generate_address(wallet_id, chain_id, asset_id)
                     .await
                     .context(format!(
-                        "Failed to generate address {} {} {}",
-                        wallet_id, chain_id, asset_id
+                        "Failed to generate address {wallet_id} {chain_id} {asset_id}"
                     ))?;
 
-                println!("address => {}", address);
+                println!("address => {address}");
                 Ok(())
             }
         }
