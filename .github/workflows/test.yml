@@ -23,6 +23,9 @@ jobs:
         ports:
           - 5432:5432
 
+      redis:
+        image: redis
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
