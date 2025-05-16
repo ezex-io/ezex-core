@@ -10,7 +10,7 @@ use crate::market::market_manager::MarketManager;
 
 pub async fn start_server(address: String) -> Result<(), Box<dyn std::error::Error>> {
     let adr = address.parse().unwrap();
-    info!("P2P Server listening on {}", address);
+    info!("P2P Server listening on {address}");
     let database_url = "postgres://postgres:mysecretpassword@localhost/postgres";
     let pool_size = 10;
     if let Err(e) = Server::builder()
@@ -21,7 +21,7 @@ pub async fn start_server(address: String) -> Result<(), Box<dyn std::error::Err
         .serve(adr)
         .await
     {
-        error!("failed to read from socket; err = {:?}", e);
+        error!("failed to read from socket; err = {e:?}");
     }
 
     Ok(())

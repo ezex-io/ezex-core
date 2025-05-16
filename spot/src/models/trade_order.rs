@@ -73,7 +73,7 @@ impl TryFrom<&str> for OrderType {
         match value.to_uppercase().as_str() {
             "LIMIT" => Ok(OrderType::Limit),
             "MARKET" => Ok(OrderType::Market),
-            _ => Err(format!("Invalid OrderType: {}", value)),
+            _ => Err(format!("Invalid OrderType: {value}")),
         }
     }
 }
@@ -94,7 +94,7 @@ impl TryFrom<&str> for OrderSide {
         match value.to_uppercase().as_str() {
             "BUY" => Ok(OrderSide::Buy),
             "SELL" => Ok(OrderSide::Sell),
-            _ => Err(format!("Invalid OrderSide: {}", value)),
+            _ => Err(format!("Invalid OrderSide: {value}")),
         }
     }
 }

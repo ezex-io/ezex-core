@@ -68,8 +68,7 @@ impl DepositHandler {
                 self.publisher.publish(event).await?;
 
                 info!(
-                    "A new address generated. {} {} {}, address: {}",
-                    user_id, chain_id, asset_id, address
+                    "A new address generated. {user_id} {chain_id} {asset_id}, address: {address}"
                 );
 
                 Ok(address)

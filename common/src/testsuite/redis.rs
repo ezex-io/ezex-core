@@ -67,8 +67,7 @@ impl RedisTestClient {
             } else {
                 assert!(
                     (counter != 50),
-                    "Expected StreamPendingReply::Empty but got Data. key: {}",
-                    key
+                    "Expected StreamPendingReply::Empty but got Data. key: {key}",
                 );
                 sleep(Duration::from_millis(100)).await;
             }

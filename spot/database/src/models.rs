@@ -31,7 +31,7 @@ impl FromStr for OrderType {
         match s.to_uppercase().as_str() {
             "LIMIT" => Ok(OrderType::Limit),
             "MARKET" => Ok(OrderType::Market),
-            _ => Err(format!("Unknown order type: {}", s)),
+            _ => Err(format!("Unknown order type: {s}")),
         }
     }
 }
@@ -60,7 +60,7 @@ impl FromStr for OrderSide {
         match s.to_uppercase().as_str() {
             "BUY" => Ok(OrderSide::Buy),
             "SELL" => Ok(OrderSide::Sell),
-            _ => Err(format!("Unknown order side: {}", s)),
+            _ => Err(format!("Unknown order side: {s}")),
         }
     }
 }
@@ -88,7 +88,7 @@ impl FromStr for MarketRole {
         match s.to_uppercase().as_str() {
             "MAKER" => Ok(MarketRole::Maker),
             "TAKER" => Ok(MarketRole::Taker),
-            _ => Err(format!("Unknown market role: {}", s)),
+            _ => Err(format!("Unknown market role: {s}")),
         }
     }
 }
@@ -123,7 +123,7 @@ impl FromStr for OrderStatus {
             "FILLED" => Ok(OrderStatus::Filled),
             "CANCELED" => Ok(OrderStatus::Canceled),
             "REJECTED" => Ok(OrderStatus::Rejected),
-            _ => Err(format!("Unknown order status: {}", s)),
+            _ => Err(format!("Unknown order status: {s}")),
         }
     }
 }

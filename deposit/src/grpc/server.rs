@@ -15,14 +15,14 @@ pub async fn start_server(config: &Config, deposit: DepositHandler) -> anyhow::R
     // defining address for our service
     let service = DepositServiceImpl::new(deposit);
     let address = config.address.parse()?;
-    info!("Deposit Server listening on {}", address);
+    info!("Deposit Server listening on {address}");
 
     if let Err(e) = Server::builder()
         .add_service(DepositServiceServer::new(service))
         .serve(address)
         .await
     {
-        error!("failed to read from socket; err = {:?}", e);
+        error!("failed to read from socket; err = {e:?}");
     };
 
     Ok(())

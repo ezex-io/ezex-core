@@ -71,7 +71,7 @@ pub fn load_config() -> Result<AppConfig, config::ConfigError> {
         // Load default configuration file
         .add_source(File::with_name("config/default").required(false))
         // Load environment-specific configuration file
-        .add_source(File::with_name(&format!("config/{}", run_mode)).required(false))
+        .add_source(File::with_name(&format!("config/{run_mode}")).required(false))
         // Load environment variables with prefix "APP" and separator "_"
         .add_source(Environment::with_prefix("APP").separator("_"))
         .build()?;

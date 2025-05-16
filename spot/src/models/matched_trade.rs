@@ -32,7 +32,7 @@ impl TryFrom<&str> for MarketRole {
         match value {
             v if v.eq_ignore_ascii_case("MAKER") => Ok(MarketRole::Maker),
             v if v.eq_ignore_ascii_case("TAKER") => Ok(MarketRole::Taker),
-            _ => Err(format!("Invalid MarketRole: {}", value)),
+            _ => Err(format!("Invalid MarketRole: {value}")),
         }
     }
 }

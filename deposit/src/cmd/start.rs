@@ -35,7 +35,7 @@ pub struct StartArgs {
 impl StartArgs {
     pub async fn execute(&self) {
         if let Err(err) = self.execute_inner().await {
-            eprintln!("Error Details: {:#}", err);
+            eprintln!("Error Details: {err:#}");
             std::process::exit(1);
         }
     }
