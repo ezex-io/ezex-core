@@ -5,6 +5,6 @@ use procedural::EnvPrefix;
 #[env_prefix = "EZEX_DEPOSIT"]
 #[group(id = "grpc")]
 pub struct Config {
-    #[arg(long, env = "GRPC_ADDRESS")]
+    #[arg(long = "grpc-address", env = "GRPC_ADDRESS")]
     pub address: String,
 }

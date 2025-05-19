@@ -26,7 +26,7 @@ anyhow = "1.0"
 chrono = "0.4"
 prost = "0.13"
 dotenvy = "0.15"
-erased-serde = "0.3"
+erased-serde = "0.4"
 procedural = { path = "common/procedural" }
 
 # Binary dependencies
@@ -37,7 +37,7 @@ mockall = "0.13"
 assert_cmd = "2.0"
 httpmock = "0.7"
 predicates = "3.1"
-nix = "0.29"
+nix = "0.30"
 serial_test = "3.2"
 portpicker = "0.1"
 

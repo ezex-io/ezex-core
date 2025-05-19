@@ -2,11 +2,11 @@ use crate::types::{Address, Wallet};
 
 /// Provides read access to the database.
 pub trait DatabaseReader {
-    /// Returns wallet details for the given `chain_id`, if it exists.
+    /// Returns wallet details for the given `chain_id`, if available.
     ///
     /// # Errors
     /// Returns an error if the wallet associated with the identifier cannot be retrieved.
-    fn get_wallet(&self, chain_id: &str) -> anyhow::Result<Wallet>;
+    fn get_wallet(&self, chain_id: &str) -> anyhow::Result<Option<Wallet>>;
 
     /// Returns the address details for a user, if one has been generated for the specified asset.
     ///
@@ -14,6 +14,7 @@ pub trait DatabaseReader {
     /// Returns an error if the address associated with the user cannot be retrieved.
     fn get_address(
         &self,
+        wallet_id: &str,
         user_id: &str,
         chain_id: &str,
         asset_id: &str,
@@ -23,24 +24,26 @@ pub trait DatabaseReader {
     ///
     /// # Errors
     /// Returns an error if the check fails.
-    fn has_address(&self, address: &str, chain_id: &str, asset_id: &str) -> anyhow::Result<bool>;
+    fn has_address(
+        &self,
+        wallet_id: &str,
+        user_id: &str,
+        chain_id: &str,
+        asset_id: &str,
+    ) -> anyhow::Result<bool>;
 }
 
 /// Provides write access to the database.
 pub trait DatabaseWriter {
-    /// Assigns a new address to a user.
+    /// Set the wallet_id for the given `chain_id`.
+    fn set_wallet(&self, chain_id: &str, wallet_id: &str) -> anyhow::Result<Option<()>>;
+
+    /// Saves a newly generated address to the database.
     ///
     /// # Errors
-    /// Returns an error if an address is already assigned for the given identifier and user ID,
+    /// Returns an error if an address has already been assigned to the user,
     /// or if the address cannot be stored for any reason.
-    fn assign_address(
-        &self,
-        user_id: &str,
-        wallet_id: &str,
-        chain_id: &str,
-        asset_id: &str,
-        address: &str,
-    ) -> anyhow::Result<()>;
+    fn save_address(&self, address: &Address) -> anyhow::Result<()>;
 }
 
 /// Combines both read and write capabilities for database access.

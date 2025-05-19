@@ -1,4 +1,3 @@
-// use crate::event::EventMessage;
 use redis::{Commands, streams::StreamPendingReply};
 use redis_stream_bus::entry::Entry;
 use serde::de::DeserializeOwned;

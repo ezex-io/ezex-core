@@ -1,10 +1,11 @@
 // models.rs
 // Diesel ORM models corresponding to database tables
 
+use std::str::FromStr;
+
 use bigdecimal::BigDecimal;
 use diesel::prelude::*;
 use serde::{Deserialize, Serialize};
-use std::str::FromStr;
 
 use super::schema::*;
 

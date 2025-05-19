@@ -1,12 +1,18 @@
+use log::info;
+use tonic::{Request, Response, Status};
+
 use crate::{
-    // config::Config,
     database::provider::DatabaseProvider,
     event_bus::{events, provider::PublisherProvider},
+    grpc::deposit::{
+        GenerateAddressRequest,
+        GenerateAddressResponse,
+        GetAddressRequest,
+        GetAddressResponse,
+    },
     kms::provider::KmsProvider,
-    types::Address,
+    types::Wallet,
 };
-// use common::event::*;
-use log::info;
 
 pub struct DepositHandler {
     database: Box<dyn DatabaseProvider>,
@@ -29,50 +35,104 @@ impl DepositHandler {
 
     pub async fn get_address(
         &self,
-        user_id: &str,
-        chain_id: &str,
-        asset_id: &str,
-    ) -> anyhow::Result<Option<Address>> {
-        self.database.get_address(user_id, chain_id, asset_id)
+        req: Request<GetAddressRequest>,
+    ) -> anyhow::Result<Response<GetAddressResponse>, Status> {
+        let wallet = self
+            .get_wallet(&req.get_ref().chain_id)
+            .map_err(|err| Status::internal(err.to_string()))?;
+
+        let address = match self
+            .database
+            .get_address(
+                &wallet.wallet_id,
+                &req.get_ref().user_id,
+                &req.get_ref().chain_id,
+                &req.get_ref().asset_id,
+            )
+            .map_err(|e| Status::internal(e.to_string()))?
+        {
+            Some(address) => address,
+            None => {
+                return Ok(Response::new(GetAddressResponse {
+                    has_address: false,
+                    address: "".to_string(),
+                }));
+            }
+        };
+
+        Ok(Response::new(GetAddressResponse {
+            has_address: true,
+            address: address.address,
+        }))
     }
 
     pub async fn generate_address(
-        &mut self,
-        user_id: &str,
-        chain_id: &str,
-        asset_id: &str,
-    ) -> anyhow::Result<String> {
-        match self.database.get_address(user_id, chain_id, asset_id)? {
-            Some(address) => {
-                anyhow::bail!("Duplicated address: {}", address.address)
-            }
-            None => {
-                let wallet_id = self.database.get_wallet(chain_id)?.chain_id;
+        &self,
+        req: Request<GenerateAddressRequest>,
+    ) -> anyhow::Result<Response<GenerateAddressResponse>, Status> {
+        let wallet = self
+            .get_wallet(&req.get_ref().chain_id)
+            .map_err(|err| Status::internal(err.to_string()))?;
+
+        match self
+            .database
+            .has_address(
+                &wallet.wallet_id,
+                &req.get_ref().user_id,
+                &req.get_ref().chain_id,
+                &req.get_ref().asset_id,
+            )
+            .map_err(|e| Status::internal(e.to_string()))?
+        {
+            true => Err(Status::invalid_argument(format!(
+                "duplicated address: {}/{}/{}/{}",
+                wallet.wallet_id,
+                req.get_ref().user_id,
+                req.get_ref().chain_id,
+                req.get_ref().asset_id,
+            ))),
+            false => {
                 let address = self
                     .kms
-                    .generate_address(&wallet_id, chain_id, asset_id)
-                    .await?;
+                    .generate_address(
+                        &wallet.wallet_id,
+                        &req.get_ref().user_id,
+                        &req.get_ref().chain_id,
+                        &req.get_ref().asset_id,
+                    )
+                    .await
+                    .map_err(|e| Status::internal(e.to_string()))?;
 
                 // Store the address in db
                 self.database
-                    .assign_address(user_id, &wallet_id, chain_id, asset_id, &address)?;
+                    .save_address(&address)
+                    .map_err(|e| Status::internal(e.to_string()))?;
 
                 // Publish the event
                 let event = Box::new(events::address::Generated {
-                    user_id: user_id.to_string(),
-                    wallet_id: wallet_id.to_string(),
-                    chain_id: chain_id.to_string(),
-                    asset_id: asset_id.to_string(),
-                    address: address.clone(),
+                    user_id: address.user_id.to_string(),
+                    chain_id: address.chain_id.to_string(),
+                    asset_id: address.asset_id.to_string(),
+                    address: address.address.clone(),
                 });
-                self.publisher.publish(event).await?;
+                self.publisher
+                    .publish(event)
+                    .await
+                    .map_err(|e| Status::internal(e.to_string()))?;
 
-                info!(
-                    "A new address generated. {user_id} {chain_id} {asset_id}, address: {address}"
-                );
+                info!("address generated {address}");
 
-                Ok(address)
+                Ok(Response::new(GenerateAddressResponse {
+                    address: address.address,
+                }))
             }
+        }
+    }
+
+    fn get_wallet(&self, chain_id: &str) -> anyhow::Result<Wallet> {
+        match self.database.get_wallet(chain_id)? {
+            Some(wallet) => Ok(wallet),
+            None => Err(anyhow::anyhow!("unable to find wallet_id")),
         }
     }
 }
