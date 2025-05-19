@@ -1,5 +1,5 @@
 [workspace]
-members = ["deposit", "spot", "spot/database", "common", "common/procedural", "dotenvy_test"]
+members = ["deposit", "spot", "spot/database", "common", "common/procedural"]
 # see: https://doc.rust-lang.org/cargo/reference/resolver.html#resolver-versions
 resolver = "3"
 
