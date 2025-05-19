@@ -1,7 +1,7 @@
 use std::env;
 
 use config::{Config, Environment, File};
-use dotenv::dotenv;
+use dotenvy::dotenv;
 use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
