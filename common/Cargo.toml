@@ -26,6 +26,7 @@ procedural = { path = "./procedural" }
 portpicker = { workspace = true }
 erased-serde = { workspace = true }
 dotenvy = {workspace = true}
+inventory = { workspace = true }
 
 [dev-dependencies]
 mockall = { workspace = true }

@@ -28,7 +28,7 @@ prost = "0.13"
 dotenvy = "0.15"
 erased-serde = "0.4"
 procedural = { path = "common/procedural" }
-
+inventory = "0.3"
 # Binary dependencies
 ctrlc = { version = "3.4" }
 
