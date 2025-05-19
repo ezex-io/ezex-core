@@ -10,20 +10,10 @@ pub async fn test_grpc_version(ctx: &mut TestContext) {
 pub async fn test_get_address(ctx: &mut TestContext) {
     let request = GetAddressRequest {
         user_id: "alice".to_string(),
-        coin: "coin".to_string(),
+        chain_id: "Pactus".to_string(),
+        asset_id: "PAC".to_string(),
     };
     let res = ctx.grpc_client.get_address(request).await.unwrap();
-    assert_eq!(
-        res.get_ref().deposit_address,
-        "2N4sexvpWpMUjoVHHFXuAUitngG8pwb2sKf"
-    );
-}
-
-pub async fn test_address_not_exist(ctx: &mut TestContext) {
-    let request = GetAddressRequest {
-        user_id: "bob".to_string(),
-        coin: "coin".to_string(),
-    };
-    let res = ctx.grpc_client.get_address(request).await;
-    assert!(res.is_err());
+    assert!(!res.get_ref().has_address);
+    assert_eq!(res.get_ref().address, "");
 }

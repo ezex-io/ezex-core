@@ -33,23 +33,32 @@ impl PostgresTestDB {
         }
     }
 
+    /// Execute a SQL query against the test database
+    pub fn execute(&self, query: &str) {
+        let mut conn = PgConnection::establish(&self.con_string()).unwrap();
+        diesel::sql_query(query).execute(&mut conn).unwrap();
+    }
+
     pub fn con_string(&self) -> String {
         format!("{}/{}", self.database_url, self.db_name)
     }
 
     pub fn drop_database(&mut self) {
-        let disconnect_users = format!(
+        let mut admin_conn = PgConnection::establish(&self.database_url).unwrap();
+
+        let disconnect_query = format!(
             "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '{}';",
             self.db_name
         );
-        diesel::sql_query(disconnect_users.as_str())
-            .execute(&mut self.conn)
-            .as_ref()
-            .unwrap();
 
-        let query =
-            diesel::sql_query(format!("DROP DATABASE IF EXISTS {};", self.db_name).as_str());
-        query.execute(&mut self.conn).unwrap();
+        let _ = diesel::sql_query(disconnect_query).execute(&mut admin_conn);
+
+        let mut drop_conn = PgConnection::establish(&self.database_url).unwrap();
+
+        let drop_query = format!("DROP DATABASE IF EXISTS {};", self.db_name);
+        diesel::sql_query(drop_query)
+            .execute(&mut drop_conn)
+            .unwrap();
     }
 }
 

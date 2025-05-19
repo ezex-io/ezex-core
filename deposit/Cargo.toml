@@ -22,7 +22,6 @@ dotenv = { workspace = true }
 futures = { workspace = true }
 anyhow = { workspace = true }
 serde = { workspace = true }
-serde_json = { workspace = true }
 serde_redis = { workspace = true }
 diesel = { workspace = true }
 diesel_migrations = { workspace = true }
