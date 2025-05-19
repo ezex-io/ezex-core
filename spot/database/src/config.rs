@@ -1,11 +1,11 @@
 use serde::{Deserialize, Serialize};
-use structopt::StructOpt;
+use clap::Parser;
 
-#[derive(Debug, Clone, Serialize, Deserialize, StructOpt)]
+#[derive(Debug, Clone, Serialize, Deserialize, Parser)]
 pub struct Config {
-    #[structopt(long = "database-url", env = "DATABASE_URL")]
+    #[arg(long = "database-url", env = "DATABASE_URL")]
     pub db_url: String,
-    #[structopt(long = "pool-size", env = "DATABASE_POOL_SIZE", default_value = "3")]
+    #[arg(long = "pool-size", env = "DATABASE_POOL_SIZE", default_value = "3")]
     pub pool_size: u32,
 }
 
