@@ -5,11 +5,14 @@
 ///
 /// ## Usage
 ///
-/// ```rust
+/// ```rust,no_run
 /// use common::register_config;
+/// // Import required traits
+/// use clap::Args;
+/// use procedural::EnvPrefix;
 ///
 /// #[derive(Debug, Clone, Args, EnvPrefix)]
-/// #[prefix = "MY_APP"]
+/// #[env_prefix = "MY_APP"]
 /// pub struct Config {
 ///     #[arg(long, env = "SERVER_PORT")]
 ///     pub port: u16,
