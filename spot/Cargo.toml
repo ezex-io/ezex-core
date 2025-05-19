@@ -15,7 +15,7 @@ tokio = { version = "1.45.0", features = [ "full" ] }
 log = "0.4"
 env_logger = "0.9"
 config = "0.15.11"
-dotenv = "0.15.0"
+dotenvy = "0.15.0"
 uuid = { version = "0.8", features = ["serde", "v4"] }
 strum = { version = "0.21", features = ["derive"] }
 strum_macros = "0.21"

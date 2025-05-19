@@ -25,7 +25,7 @@ redis = { workspace = true, features = ["streams"] }
 procedural = { path = "./procedural" }
 portpicker = { workspace = true }
 erased-serde = { workspace = true }
-dotenv = {workspace = true}
+dotenvy = {workspace = true}
 
 [dev-dependencies]
 mockall = { workspace = true }

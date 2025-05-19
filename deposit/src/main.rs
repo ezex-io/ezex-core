@@ -16,7 +16,7 @@ pub struct CLI {
 
 #[tokio::main]
 async fn main() {
-    dotenv::dotenv().ok();
+    dotenvy::dotenv().ok();
 
     let cli = CLI::parse();
     cmd::handle(cli.cmd).await;

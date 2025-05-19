@@ -1,5 +1,5 @@
 [workspace]
-members = ["deposit", "spot", "spot/database", "common", "common/procedural"]
+members = ["deposit", "spot", "spot/database", "common", "common/procedural", "dotenvy_test"]
 # see: https://doc.rust-lang.org/cargo/reference/resolver.html#resolver-versions
 resolver = "3"
 
@@ -25,7 +25,7 @@ futures = "0.3"
 anyhow = "1.0"
 chrono = "0.4"
 prost = "0.13"
-dotenv = "0.15"
+dotenvy = "0.15"
 erased-serde = "0.3"
 procedural = { path = "common/procedural" }
 
