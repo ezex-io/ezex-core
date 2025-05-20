@@ -28,7 +28,7 @@ anyhow = "1.0.98"
 # Async
 tokio = { version = "1.45.0", features = ["full"] }
 futures = "0.3.31"
-structopt = { version = "0.3", default-features = false }
+clap = { workspace = true }
 # Logging
 log = "0.4.27"
 env_logger = "0.11.8"
