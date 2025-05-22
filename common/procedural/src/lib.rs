@@ -43,28 +43,29 @@ pub(crate) fn event_key(input: DeriveInput) -> Result<Lit, String> {
                 Err(_) => {
                     // If direct parsing fails, try the more complex approach
                     let meta = attr.meta.clone();
-                    if let Ok(list) = meta.require_list() {
-                        if let Ok(lit) = list.parse_args::<Lit>() {
-                            return Ok(lit);
-                        }
+                    match meta.require_list() {
+                        Ok(list) => match list.parse_args::<Lit>() {
+                            Ok(lit) => Ok(lit),
+                            Err(_) => Err(
+                                "Expected a literal string for event_key, e.g., #[event_key(\"my:event\")]"
+                                    .to_owned(),
+                            ),
+                        },
+                        Err(_) => Err(
+                            "Expected a literal string for event_key, e.g., #[event_key(\"my:event\")]"
+                                .to_owned(),
+                        ),
                     }
-
-                    Err(
-                        "Expected a literal string for event_key, e.g., #[event_key(\"my:event\")]"
-                            .to_owned(),
-                    )
                 }
             }
         }
         None => Err("Need event_key attribute".to_owned()),
     }
 }
-
 /// custom derive macro to generate prefix for env vars
 #[proc_macro_derive(EnvPrefix, attributes(env_prefix))]
 pub fn derive_env_prefix(input: TokenStream) -> TokenStream {
     let ast = parse_macro_input!(input as DeriveInput);
-
     // println!("Debug: All attributes: {:?}", ast.attrs);
 
     let prefix = ast

@@ -1,4 +1,5 @@
 use clap::Args;
+use common::register_config;
 use procedural::EnvPrefix;
 
 #[derive(Debug, Clone, Args, EnvPrefix)]
@@ -14,3 +15,5 @@ pub struct Config {
     )]
     pub pool_size: u32,
 }
+
+register_config!(Config);

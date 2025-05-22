@@ -36,6 +36,7 @@ procedural = { workspace = true }
 redis_stream_bus = { workspace = true }
 erased-serde = { workspace = true }
 redis = { workspace = true } # TODO: WE may no need it here
+inventory = { workspace = true }
 
 [dev-dependencies]
 mockall = { workspace = true }

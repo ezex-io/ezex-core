@@ -1,6 +1,9 @@
 use anyhow::Result;
-use clap::{Parser, command};
-use common::{logger, logger::config::Config as LoggerConfig};
+use clap::{Args, Parser, command};
+use common::{
+    logger::{self, config::Config as LoggerConfig},
+    register_config,
+};
 use ezex_deposit::{
     database::postgres::{config::Config as PostgresConfig, postgres::PostgresDB},
     deposit::DepositHandler,
@@ -8,7 +11,8 @@ use ezex_deposit::{
     grpc::{config::Config as GRPCConfig, server},
     kms::{config::Config as KmsConfig, kms::DepositKms},
 };
-use redis_stream_bus::config::Config as RedisConfig;
+use procedural::EnvPrefix;
+use redis_stream_bus::config::Config as RedisStreamConfig;
 use std::{
     sync::{
         Arc,
@@ -17,6 +21,32 @@ use std::{
     thread,
 };
 use tokio::task;
+
+#[derive(Debug, Clone, Args, EnvPrefix)]
+#[env_prefix = "EZEX_DEPOSIT"]
+#[group(id = "redis")]
+pub struct RedisConfig {
+    #[arg(long = "redis-connection-string", env = "REDIS_CONNECTION_STRING")]
+    pub connection_string: String,
+    #[arg(long = "redis-group-name", env = "REDIS_GROUP_NAME")]
+    pub group_name: String,
+    #[arg(long = "redis-consumer-name", env = "REDIS_CONSUMER_NAME")]
+    pub consumer_name: String,
+}
+
+// Register this config
+register_config!(RedisConfig);
+
+// Conversion to the third-party type
+impl From<RedisConfig> for RedisStreamConfig {
+    fn from(config: RedisConfig) -> Self {
+        RedisStreamConfig {
+            connection_string: config.connection_string,
+            consumer_name: config.consumer_name,
+            group_name: config.group_name,
+        }
+    }
+}
 
 #[derive(Debug, Clone, Parser)]
 pub struct StartArgs {
@@ -41,6 +71,15 @@ impl StartArgs {
     }
 
     async fn execute_inner(&self) -> Result<()> {
+        // Initialize all configs (registers them in the registry)
+        common::config_registry::init_all_configs();
+
+        // Apply all prefixes (calls prepend_envs() for all registered configs)
+        common::config_registry::global_registry()
+            .lock()
+            .unwrap()
+            .apply_all_prefixes();
+
         logger::init_logger(&self.logger_config);
         common::utils::exit_on_panic();
 
@@ -51,7 +90,8 @@ impl StartArgs {
         })
         .expect("Error setting Ctrl-C handler");
 
-        let redis = RedisBus::new(&self.redis_config)?;
+        let redis_config: redis_stream_bus::config::Config = self.redis_config.clone().into();
+        let redis = RedisBus::new(&redis_config)?;
         let pq = PostgresDB::new(&self.postgres_config)?;
         let kms = DepositKms::new(&self.kms_config)?;
 

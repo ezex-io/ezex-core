@@ -672,6 +672,7 @@ dependencies = [
  "dotenvy",
  "erased-serde",
  "futures",
+ "inventory",
  "log",
  "log4rs",
  "mockall",
@@ -1177,6 +1178,7 @@ dependencies = [
  "erased-serde",
  "futures",
  "httpmock",
+ "inventory",
  "log",
  "mockall",
  "nix",
@@ -1780,6 +1782,15 @@ checksum = "cea70ddb795996207ad57735b50c5982d8844f38ba9ee5f1aedcfb708a2aa11e"
 dependencies = [
  "equivalent",
  "hashbrown 0.15.3",
+]
+
+[[package]]
+name = "inventory"
+version = "0.3.20"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ab08d7cd2c5897f2c949e5383ea7c7db03fb19130ffcfbf7eda795137ae3cb83"
+dependencies = [
+ "rustversion",
 ]
 
 [[package]]
