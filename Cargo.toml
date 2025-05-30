@@ -18,7 +18,7 @@ chains-rs = { git = "https://github.com/ezex-io/chains" }
 async-trait = "0.1"
 redis = "0.31"
 log = "0.4"
-log4rs = "1.3"
+log4rs = "1.4.0-rc1"
 rand = "0.9"
 thiserror = "2.0"
 futures = "0.3"
