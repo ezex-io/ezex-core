@@ -2,7 +2,7 @@
 name = "ezex-deposit"
 version = "1.0.0"
 authors = ["ezeX development team"]
-edition = "2024"
+edition = "2021"
 autotests = false
 
 [[test]]
