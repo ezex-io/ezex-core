@@ -9,7 +9,7 @@ pub mod logger;
 pub mod macros;
 pub mod testsuite;
 pub mod utils;
-pub mod wallet;
+pub mod wallet_addresses;
 
 pub use config_registry::*;
 
@@ -20,4 +20,3 @@ pub use event::*;
 pub use logger::*;
 pub use testsuite::*;
 pub use utils::*;
-pub use wallet::*;
