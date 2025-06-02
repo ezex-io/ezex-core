@@ -1,4 +1,5 @@
-use crate::wallet::{BscWallet, PactusWallet, WalletOperations};
+#[allow(unused_imports)]
+use crate::wallet::{BscWallet, PactusWallet};
 
 #[test]
 fn test_bsc_wallet_generation() {
